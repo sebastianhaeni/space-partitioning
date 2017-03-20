@@ -1,3 +1,6 @@
 # IDE specifics
 .idea
 *.iml
+
+# Node
+node_modules/
