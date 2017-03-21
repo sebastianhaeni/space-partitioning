@@ -1,4 +1,4 @@
-# Space Partitioning Data Structures Documentation
+# Thermo Trains Docs
 
 ## Generate PDF
 

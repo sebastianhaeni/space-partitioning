@@ -1,7 +1,7 @@
 {
   "name": "space-partitioning-docs",
   "version": "0.0.1",
-  "description": "Documentation of a study of thermal detection of isolation problems on Swiss trains",
+  "description": "Documentation of a study of space partitioning data structures",
   "scripts": {
     "serve:open": "node js/open.js http://localhost:3000 && gulp serve",
     "serve": "gulp serve",
@@ -29,6 +29,7 @@
     "gulp": "^3.9.1",
     "gulp-live-server": "0.0.30",
     "gulp-nunjucks-render": "^2.0.0",
+    "gulp-sass": "^3.1.0",
     "gulp-util": "^3.0.8",
     "jquery": "1.11.2",
     "moment": "^2.17.1",
