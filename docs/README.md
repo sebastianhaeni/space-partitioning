@@ -1,4 +1,4 @@
-# Thermo Trains Docs
+# Space Partitioning Docs
 
 ## Generate PDF
 
