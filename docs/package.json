@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Documentation of a study of space partitioning data structures",
   "scripts": {
+    "start": "npm run serve:open",
     "serve:open": "node js/open.js http://localhost:3000 && gulp serve",
     "serve": "gulp serve",
     "build": "npm run build:html && npm run build:pdf && node js/open.js ./build/space-partitioning.pdf",
