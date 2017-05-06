@@ -1,12 +1,75 @@
 <div class="chapter">
   <h2 class="break">Anwendungsbereiche</h2>
 
-  <h3>Computergrafik</h3>
+  <h3>Kollisionsdetektion</h3>
+  <p>
+    Raumunterteilung ist ein hilfreiches Werkzeug um in Computerspielen oder sonstigen Computersimulationen mit einer 2D
+    oder 3D Grafik Collision Detection zu realisieren. Um zu detektieren welche Einheiten gerade in der Nähe des
+    Hauptgebäudes sind kann man entweder naiv mit Brute Force durch die Liste aller Einheiten im Spiel iterieren oder
+    man verwendet einen raumunterteilenden Baum um die Einheiten schnell mit einer Komplexität von
+    <code>O(log N)</code> zu finden.
+  </p>
 
   <h4>Nearest Neighbor</h4>
+  <p>
+    Um eine gewisse Anzahl an nächstgelegenen Nachbaren zu finden wird ein k-nearest neighbor (k-NN) Algorithmus
+    verwendet. Ein k-NN Algorithmus klassifiziert Datenpunkte in einer Menge zu Gruppen.
+  </p>
+
+  <figure>
+    <img src="images/knn.png">
+    <figcaption>k nearest neighbor Suche</figcaption>
+  </figure>
+
+  <p>
+    Seit 1970 wurde die Branch and Bound Methode verwendet um das Problem zu lösen. Branch and Bound wird für
+    Natürliche-Zahlen-Optimierungsprobleme angewendet. Also für Probleme in welchen die Variabeln natürliche Zahlen
+    sind. Häufig, aber nicht immer, sind die Variabeln 1 oder 0. Ein Beispiel dafür wäre das Knapsack Problem auf
+    welches ich jetzt nicht weiter eingehe.
+  </p>
+
+  <p>
+    Mehrere raumunterteilende Methoden wurden entwickelt um die Nearest Neighbor Suche zu lösen, eine davon,
+    wahrscheinlich die einfachst, heisst <a href="#kd-tree">Kd Tree</a>. Der Kd Tree unterteilt den Suchraum iterativ in
+    zwei Unterräume die je die Hälfte der Punkte enthalten. Dieser ist jedoch nicht sehr geeignet wenn sich der Suchraum
+    dynamisch verändert. Deshalb wurder der <a href="#r-tree">R Tree</a> entwickelt, welcher effiziente Algorithmen für
+    das Einfügen und Löschen von Punkten hat.
+  </p>
+
   <h4>Ray Tracing</h4>
+  <p>
+    In Ray Tracing Applikationen werden Strahlen durch jedes anzuzeigende Pixel geschossen um zu berechnen welche Farbe
+    es hat. Das ist offensichtlich ohne weitere Optimierungen kaum in Echtzeit lösbar. Verbesserungen der Performance
+    können durch die Wahl von optimalen Kollisionsgeometrien, moderne Implentationen von Schnittpunktalgorithmen mit
+    Object Bounding und Volumen sowie durch parallere Berechnung gewonnen werden. Ein grosser Gewinn an Performance
+    erhält man durch die Benutzung einer raumunterteilenden Datenstruktur. Die einfachste Möglichkeit ist ein uniformes
+    Raster. Dies ist einfach zu implentieren und hat fast keinen Verwaltungsaufwand. Mit <a href="#kd-tree">Kd Trees</a>
+    oder <a href="#octree">Octrees</a> kann aber noch mehr herausgeholt werden.
+  </p>
+
   <h4>Portal Culling</h4>
-  <h4>Collision Detection</h4>
+  <p>
+    In 3D Anwendungen gibt es häufig eine grosse Menge an Geometrien, die gezeichnet werden müssen, um die Szene
+    darzustellen. Damit nicht immer alles gezeichnet werden muss, kann Portal Culling zur Anwendung gebracht werden.
+    Simpel gesagt werden nur die Welt-Sektionen gezeichnet die durch ein Portal sichtbar sind. Das ist relativ einfach
+    vorstellbar bei Ur-Klassikern wie Doom oder Wolfenstein 3D. Nur was durch ein Portal sichtbar ist muss auch
+    gezeichnet werden. Um das zu berechnen werden raumunterteilende Datenstrukturen verwendet. Portal Culling wird auch
+    in den modernsten Game Engines angewendet wie z.B. der <a href="#ref-cryengine-portal-culling">CRYENGINE</a>.
+  </p>
 
   <h3>Leiterplattenprüfung</h3>
+  <p>
+    Raumunterteilende Algorithmen und Datenstrukturen werden nicht ausschliesslich für Computeranwendungen gebraucht.
+    Auch Designer von Leiterplatten verwenden raumunterteilende Methoden um sicherzustellen, dass die entworfene Platte
+    auch herstellbar ist. Diese Überprüfung stellt fest ob unter Berücksichtigung der Leiterbreite und die nötigen
+    Abstände dazwischen eingehalten wurden. Ein modernes Design kann Milliarden von Polygonen haben die Kabel und
+    Transistoren repräsentieren.
+  </p>
 </div>
+
+
+<p id="ref-cryengine-portal-culling" class="reference-item">
+  <span class="ref">Culling Explained: CRYENGINE</span>
+  <a href="http://docs.cryengine.com/display/SDKDOC4/Culling+Explained" target="_blank">http://docs.cryengine.com/display/SDKDOC4/Culling+Explained</a>
+  <span class="retreived">6. Mai 2017</span>
+</p>

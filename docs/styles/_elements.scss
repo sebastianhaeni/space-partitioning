@@ -3,7 +3,7 @@ html {
   line-height: $line-height-base;
   font-family: $font-family;
   text-rendering: optimizeLegibility;
-  counter-reset: chapter - 2;
+  counter-reset: chapter -2;
   font-size: $font-size-base;
 }
 
