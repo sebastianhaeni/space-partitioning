@@ -1,4 +1,203 @@
 <h3><a name="bsp-tree">BSP Tree</a></h3>
+<p>
+  Eine raumunterteilende Grafik mit Polygonen und dem dazugehörigen BSP Tree ist unten dargestellt. Um den Raum zu
+  unterteilen schneiden wir die Ebene zuerst mit &ell;<sub>1</sub>, daraus ergeben sich zwei neue Halbebenen. Die
+  Halbebene über &ell;<sub>1</sub> schneiden wir mit &ell;<sub>2</sub> und die Halbebene unter &ell;<sub>1</sub> mit
+  &ell;<sub>3</sub> und so weiter. Die Schnitte unterteilen nicht nur die Ebene, sie können auch die Objekte darin in
+  Fragmente unterteilen. Dieser Vorgang wird solange weitergeführt bis in jeder Region nur noch ein Fragment vorhanden
+  ist.
+</p>
+
+<figure>
+  <img src="images/bsp-tree.png">
+  <figcaption>
+    Teilebenen und der dazugehörige BSP Tree.
+    Quelle: <a href="#ref-computational-geometry">Computational Geometry</a>
+  </figcaption>
+</figure>
+
+<p>
+  Diese Unterteilung wird als Binärbaum modelliert. Jedes Blatt vom Baum korrespondiert zu einem Fragment der finalen
+  Unterteilung. Jeder interne Knoten des Baums korrespondiert zu einer Schneidegeraden.
+</p>
+
+<p>
+  Den erzeugten Baum können wir nun verwenden um den Painters Algorithmus korrekt umzusetzen. Die Effizients des
+  Algorithmus ist aber stark abhängig von der Grösse des BSP Trees. Je kleiner, desto effizienter. Also müssen wir einen
+  geeigneten Schneidealgorithmus finden, der möglichst wenig Polygone durchschneidet und so einen kleinen Baum erzeugt.
+  Um den Schneidealgorithmus zu unterstützen können wir im Szenenaufbau einige Tricks anwenden die den Baum kleiner
+  lassen werden. So können zum Beispiel keine gekurvten Objekte verwendet werden, sondern Polyeder die in Dreiecke
+  aufteilbar sind.
+</p>
+
 <h3>Konstruktion</h3>
+<p>
+  Der Algorithmus zur Konstruktion eines BSP Trees ist einfach und ist auf <a href="#ref-faqs-bsp-tree">faqs.org</a>
+  sehr gut beschrieben:
+</p>
+
+<ol>
+  <li>Eine Ebene auswählen</li>
+  <li>Unterteile die Menge an Polygonen in der Ebene</li>
+  <li>Fahre rekursiv mit beiden Halbebenen fort</li>
+</ol>
+
+<p>
+  <b>Wahl der Teilebene:</b>
+  Die Wahl der Teilebene ist abhängig vom Anwendungsfall und welche Effizientskriterien wir für die Konstruktion haben.
+  Für einige Anwendungen kann es sinnvoll sein die Teilebene von der Liste der Polygone abzuleiten, für andere macht es
+  mehr Sinn wenn die Teilebene senkrecht an den Achsen ausgerichtet ist.
+</p>
+
+<p>
+  Ein gutes Ziel ist ein balancierter Baum. Balanciert ist ein Baum wenn jedes Blatt ungefähr die selbe Menge an
+  Polygonen hat. Das ist aber nur mit hohem Rechenaufwand erreichbar. Eine schlechte Wahl der Teilebene kann viele
+  Teilfragmente zur Folge haben und dadurch viele Polygone an den Blättern erzeugen. Normalerweise macht man ein Trade
+  Off zwischen Balance und Anzahl Teilungen.
+</p>
+
+<p>
+  <b>Teilfragmente:</b>
+  Die Unterteilung von Polygonen in Fragemente ist die Klassifikation jedes Polygon-Objektes der Menge in Abhängigkeit
+  der Teilebene. Ist ein Poylgon zur einen oder anderen Seite der Trennlinie, wird es nicht modifiziert und wird zur
+  Teilmenge der Seite zu der es gehört zugeordnet. Überschneiden sich Trennlinie und Polygon wird es in zwei oder mehr
+  Fragemente zerteilt. Die resultierenden Fragmente werden den beiden Seiten zugeordnet.
+</p>
+
+<p>
+  <b>Stoppbedingung:</b>
+  Wann genau aufgehört wird den Baum zu berechnen ist wiederum anwendungsbedingt. Ein mögliches Kriterium kann eine
+  maximale Fragment Anzahl bei einem Blatt sein. Ein idealer BSP Baum hätte das Maximum von 1. Oder man fährt solange
+  fort bis jedes Polygon in einem internen Blatt vorhanden ist. Oder man limitiert die Baumtiefe.
+</p>
+
+<p>
+  <b>Pseudo Code Konstruktion BSP Tree:</b>
+  Die folgenden Code Listings zeigen die Struktur der BspTree Klasse und der Algorithmus zur Konstruktion des Baumes.
+</p>
+
+
+<figure class="affix">
+<pre><code>class BspTree {
+  Plane partition;
+  List&lt;Polygon&gt; polygons = new ArrayList&lt;&gt;();
+  BspTree front;
+  BspTree back;
+}
+</code></pre>
+  <figcaption>Struktur BSP Tree</figcaption>
+</figure>
+
+<figure class="affix">
+<pre><code>void buildBspTree(BspTree tree, List&lt;Polygon&gt; polygons) {
+  Polygon root = polygons.get(0);
+
+  tree.setPartition(root.getPlane());
+  tree.getPolygons().add(root);
+
+  List&lt;Polygon&gt; frontlist = new ArrayList&lt;&gt;();
+  List&lt;Polygon&gt; backlist = new ArrayList&lt;&gt;();
+
+  polygons.forEach(polygon -> {
+    PositionClassification result = tree.getPartition().classify(polygon);
+
+    switch(result) {
+      case COINCIDENT:
+        tree.getPolygons().add(polygon);
+        break;
+      case IN_BACK_OF:
+        backlist.add(polygon);
+        break;
+      case IN_FRONT_OF:
+        frontlist.add(polygon);
+        break;
+      case SPANNING:
+        Pair&lt;Polygon, Polygon&gt; split = splitPolygon(polygon, tree.getPartition());
+        backlist.add(split.getLeft());
+        frontlist.add(split.getRight());
+        break;
+    }
+  });
+
+  if(!frontlist.isEmpty()) {
+    tree.setFront(new BspTree());
+    buildBspTree(tree.getFront(), frontlist);
+  }
+
+  if(!backlist.isEmpty()) {
+    tree.setBack(new BspTree());
+    buildBspTree(tree.getBack(), backlist);
+  }
+}
+</code></pre>
+  <figcaption>Algorithmus: Konstruktion BSP Tree</figcaption>
+</figure>
+
+<p>
+  Diese Implementation nimmt an, dass alle Polygone konvex sind. Konvex heisst, von jedem Punkt des Polygons kann ohne
+  verlassen des Polygons ein beliebiger anderer Punkt erreicht werden. Auch kann die Implementation verbessert werden in
+  dem die Teilebene (Partition) intelligenter ausgewählt wird.
+</p>
 
 <h3>Suche</h3>
+<p>
+  Der Algorithmus um eine Szene zu zeichnen vom Standpunkt <code>v</code> sieht so aus:
+</p>
+
+<figure>
+<pre><code>View v = ...;
+
+void render(BspTree tree) {
+  if(tree.getFront() == null && tree.getBack() == null) {
+    // the current node is a leaf
+    renderPolygons(tree.getPolygons());
+    return;
+  }
+
+  PositionClassification result = tree.getPartition().classify(v);
+
+  switch(result) {
+    case IN_BACK_OF:
+      renderPolygons(tree.getFront().getPolygons());
+      renderPolygons(tree.getPolygons());
+      renderPolygons(tree.getBack().getPolygons());
+      break;
+    case IN_FRONT_OF:
+      renderPolygons(tree.getBack().getPolygons());
+      renderPolygons(tree.getPolygons());
+      renderPolygons(tree.getFront().getPolygons());
+      break;
+    case COINCIDENT:
+      renderPolygons(tree.getFront().getPolygons());
+      renderPolygons(tree.getBack().getPolygons());
+      break;
+}
+</code></pre>
+  <figcaption>Algorithmus: Render Szene mit BSP Tree</figcaption>
+</figure>
+
+<h3>Dynamik</h3>
+<p>
+  Ein BSP Baum zu berechnen kostet viel CPU Zeit. Deshalb will man das nicht für jedes Frame machen. BSP Trees verwendet
+  man in der Regel nur für statische Geometrien. Eine der ersten Anwendung in der BSP Trees angewendet wurde war das
+  Spiel <a href="#ref-doom-bsp-tree">Doom</a>. Darin wird der BSP Baum beim Laden des Levels berechnet was einige Zeit
+  dauern kann wenn es ein grosses Level ist. Dynamische Objekte werden dann in Kombination eines Z-Buffers gezeichnet.
+</p>
+
+<p>
+  Fazit ist, Einfügen und Löschen von Objekten in einem BSP Tree erfordern die Neuberechnung des Baumes. Das macht den
+  BSP Baum ungeeignet für dynamische Szenen.
+</p>
+
+<p id="ref-faqs-bsp-tree" class="reference-item">
+  <span class="ref">faqs.org Erklärung der BSP Tree Konstruktion</span>
+  <a href="http://www.faqs.org/faqs/graphics/bsptree-faq"
+     target="_blank">http://www.faqs.org/faqs/graphics/bsptree-faq</a>
+  <span class="retreived">7. Mai 2017</span>
+</p>
+
+<p id="ref-doom-bsp-tree" class="reference-item">
+  <span class="ref">Doom Engine verwendet BSP Trees</span>
+  <a href="https://en.wikipedia.org/wiki/Doom_engine#Binary_space_partitioning" target="_blank">https://en.wikipedia.org/wiki/Doom_engine</a>
+  <span class="retreived">7. Mai 2017</span>
+</p>

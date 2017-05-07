@@ -1,0 +1,41 @@
+<h3>Painters Algorithmus</h3>
+
+<p>
+  Heutzutage werden Piloten nicht mehr in einem echten Flugzeug ausgebildet. Die Ausbildung findet in Flugsimulatoren
+  auf dem Boden statt. Das spart kosten. Ein Flugsimulator ist eine 3D Anwendung mit Echtzeit-Rendering. Ein Pilot
+  muss auf dem Bildschirm ein realistisches Abbild der Realität sehen können wie er es in einem echten Flugzeug auch
+  antreffen wird. Dazu müssen Objekte wie Landebahn, Flughafengebäude oder Wolken auf den Bildschirm gezeichnet
+  werden. Damit die näheren Objekte vor den weiter entfernten Objekten gezeichnet werden, muss allerdings die
+  Reihenfolge berücksichtigt werden. Wir müssen nicht sichtbare Flächen verschwinden lassen. Man nennt dies in Englisch
+  Hidden Surface Removal.
+</p>
+
+<p>
+  Einer der ersten Algorithmen zur Lösung dieses Problems war der Painters Algorithmus. Er heisst so weil ungefähr so
+  funktioniert wie ein Maler eine Zeichnung macht. Nebenbei gibt es auch den z-Buffer Algorithmus welcher der häufigsten
+  verwendete Algorithmus zu Hidden Surface Removal verwendet wird. Er hat aber den Nachteil, dass er viel Speicher und
+  einen extra Test auf der Z-Koordinate benötigt.
+</p>
+
+<p>
+  Der Painters Algorithmus sortiert die zu zeichnenden Objekte der Reihenfolge nach wie sie von der Kamera zu sehen
+  sind. Dann zeichnet er eine Fläche nach der anderen und überzeichnet bereits gezeichnete Flächen die überdeckt werden
+  müssen. Dadurch müssen wir kaum Speicher zur Verfügung haben und sehr wenig testen solange wir die Flächen sortiert
+  haben. Der Painters Algorithmus hat jedoch ein grosses Problem mit zyklisch überdeckenden Polygonen.
+</p>
+
+<figure>
+  <img src="images/painter.png">
+  <figcaption>
+    Zyklisch überdeckende Polygone.
+    Quelle: <a href="#ref-computational-geometry">Computational Geometry</a>
+  </figcaption>
+</figure>
+
+<p>
+  Um solche Abbilder auf den Bildschirm zu bringen müssen wir den Algorithmus erweitern. Irgeneine der Flächen im oberen
+  Beispiel muss unterteilt werden in ein Dreieck und ein Viereck. Danach können wir die Flächen neu sortieren und
+  erfolgreich korrekt zeichnen. Dies kostet nun aber einiges an Rechenaufwand welchen wir gerne nicht mehrmals machen.
+  Dazu können wir das in einer passenden Datenstruktur abspeichern. Das ist der binäre raumunterteilende Baum oder auch
+  BSP Tree genannt.
+</p>
