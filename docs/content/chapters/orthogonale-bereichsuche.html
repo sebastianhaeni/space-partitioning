@@ -1,6 +1,59 @@
 <div class="chapter">
   <h2 class="break">Orthogonale Bereichsuche</h2>
 
+  <p>
+    Wenn man über Datenbanken denkt, ist meist nicht das erste was aufkommt Geometrie. Jedoch kann man die Abfrage einer
+    Datenbank gut mit einem Geometrie Problem vergleichen. Wir nehmen an wir haben eine Tabelle Employee nach folgendem
+    Schema:
+  </p>
+
+  <figure>
+    <table>
+      <thead>
+      <tr>
+        <th colspan="4">Employee</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>Name</td>
+        <td>Birthday</td>
+        <td>Salary</td>
+        <td>Kids</td>
+      </tr>
+      </tbody>
+    </table>
+    <figcaption>Employee Beispiel</figcaption>
+  </figure>
+
+  <p>
+    Nun wollen wir alle Employees mit einem Salär zwischen 3'000 CHF und 4'000 CHF abfragen. Das heisst wir müssen in
+    einem eindimensionalem Raum alle Werte zwischen zwei Variabeln finden. Das ist ein bekanntes Problem und kann mit
+    einem balancierten Binärsuchbaum effizient gelöst werden. Doch was passiert wenn wir unsere Abfrage weiter
+    einschränken. Wir wollen zudem nur die Employees die zwischen 1950 und 1955 geboren wurden. Dann wird daraus ein
+    Planarproblem.
+  </p>
+
+  <figure>
+    <img src="images/database-search.png">
+    <figcaption>2D Bereichsuche in einer Datenbank</figcaption>
+  </figure>
+
+  <p>
+    Fügen wir nun noch eine weitere Anforderung, dass nur Employees mit 2 bis 4 Kindern gefunden werden sollen, können
+    wir das Problem in 3D beschreiben.
+  </p>
+
+  <figure>
+    <img src="images/database-search-3d.png">
+    <figcaption>3D Bereichsuche in einer Datenbank</figcaption>
+  </figure>
+
+  <p>
+    Das heisst, jede weitere Bedingung erzeugt eine weitere Dimension in der Abfrage. Wir nennen dieses Prinzip
+    orthogonale Bereichsuche.
+  </p>
+
   {% include "./data-structures/kd-tree.html" %}
   {% include "./data-structures/bins.html" %}
 </div>

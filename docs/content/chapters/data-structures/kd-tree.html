@@ -1,1 +1,22 @@
 <h3><a name="kd-tree">Kd Tree</a></h3>
+
+<p>
+  Wie erwähnt kann die eindimensionale Bereichsuche mit einem balancierten Binärbaum gelöst werden. Beschäftigen wir uns
+  nun mit 2 Dimensionen. Man könnte sagen die Bereichssuche in 2D kann aufgeteilt werden in zwei Bereichsuchen in 1D,
+  eine für die x-Koordinate und eine für die y-Koordinate. Wie bringen wir nun zwei Bäume zu einem?
+</p>
+
+<p>
+  Das ist möglich in dem wir abwechselnd an der x-Koordinate und y-Koordinate aufteilen. Bei der Baumwurzel teilen wir
+  an der x-Koordinate, auf der 2. Stufe an der y-Koordinate, auf der 3. Stufe wieder an der x-Koordinate und so weiter.
+</p>
+
+<figure>
+  <img src="images/kd-tree.png">
+  <figcaption>Kd Tree</figcaption>
+</figure>
+
+<p>
+  Ein solches Konstrukt nennt man ein Kd Tree. Das ist ein k-dimensionaler Baum der eine spezielle Ausprägung des BSP
+  Trees ist.
+</p>

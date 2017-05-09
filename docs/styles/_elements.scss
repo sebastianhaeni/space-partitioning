@@ -108,10 +108,10 @@ table {
   p {
     margin-top: 0;
     padding-left: 0;
-  }
 
-  p:last-child {
-    margin-bottom: 0;
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   ul {
@@ -164,6 +164,10 @@ figure {
   figcaption {
     page-break-before: avoid;
     font-size: 0.75em;
+  }
+
+  table {
+    margin: 0 auto 10px;
   }
 }
 
