@@ -40,8 +40,11 @@ class KdTree {
   }
 }
 
+let splitCounter = 0;
+
 class Split {
   constructor(coordinate, even) {
+    this.label = 'L' + (++splitCounter);
     this.coordinate = coordinate;
     this.even = even;
   }
@@ -118,15 +121,15 @@ class Region {
     } else {
       x1 = this.x1;
       x2 = this.x2;
-      y1 = this.y1;
-      y2 = split.coordinate;
+      y1 = split.coordinate;
+      y2 = this.y2;
 
       above = new Region(x1, y1, x2, y2);
 
       x1 = this.x1;
       x2 = this.x2;
-      y1 = split.coordinate;
-      y2 = this.y2;
+      y1 = this.y1;
+      y2 = split.coordinate;
 
       below = new Region(x1, y1, x2, y2);
     }
