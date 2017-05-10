@@ -2,7 +2,7 @@
 
 <p>
   Wie erwähnt kann die eindimensionale Bereichsuche mit einem balancierten Binärbaum gelöst werden. Beschäftigen wir uns
-  nun mit 2 Dimensionen. Man könnte sagen die Bereichssuche in 2D kann aufgeteilt werden in zwei Bereichsuchen in 1D,
+  nun mit 2 Dimensionen. Man könnte sagen die Bereichssuche in 2D kann aufgeteilt werden in zwei Bereichssuchen in 1D,
   eine für die x-Koordinate und eine für die y-Koordinate. Wie bringen wir nun zwei Bäume zu einem?
 </p>
 
@@ -12,11 +12,93 @@
 </p>
 
 <figure>
+  <img src="images/kd-tree-space.png">
+  <figcaption>Mit Kd Tree aufgeteilter Raum</figcaption>
+</figure>
+<figure class="full">
   <img src="images/kd-tree.png">
   <figcaption>Kd Tree</figcaption>
 </figure>
 
 <p>
   Ein solches Konstrukt nennt man ein Kd Tree. Das ist ein k-dimensionaler Baum der eine spezielle Ausprägung des BSP
-  Trees ist.
+  Trees ist. Ursprünglich hiess es 2d Tree. Doch heute ist im Sprachgebrauch ein zweidimensionaler Kd Tree gebräuchlich.
+</p>
+
+<h3>Konstruktion</h3>
+<p>
+  Die Konstruktion des Kd Tree wird anhand des folgenden Algorithmus zu erklärt.
+</p>
+
+<figure>
+<pre><code>class Node {
+  Split split;
+  Point point;
+  Node above;
+  Node below;
+}
+
+class Split {
+  boolean even;
+  float coordinate;
+}
+</code></pre>
+  <figcaption>Struktur einer Node eines Kd Tree</figcaption>
+</figure>
+
+
+<figure>
+<pre><code>void buildKdTree(List&lt;Point&gt; points, int depth) {
+  if(points.size() == 0) {
+    return null;
+  }
+
+  if(points.size() == 1) {
+    return new Node(points.get(0));
+  }
+
+  boolean even = depth % 2 == 0;
+  {split, pointsAbove, pointsBelow} = split(points, even);
+
+  Node nodeAbove = buildKdTree(pointsAbove, depth + 1);
+  Node nodeBelow = buildKdTree(pointsBelow, depth + 1);
+
+  return new Node(split, nodeAbove, noveBelow);
+}
+</code></pre>
+  <figcaption>Algorithmus: Konstruktion Kd Tree</figcaption>
+</figure>
+
+<p>
+  Wie man erkennt ist es ein rekursiver Algorithmus der mit allen Punkten startet und die Punktewolke weiter und weiter
+  in Regionen unterteilt. Der so kontruierte Baum ist automatisch ausbalanciert. Dies weil die <code>split</code>-Methode
+  die Punkte am Median unterteilt. Jedoch wird aus Performancegründen nicht der wahre Median berechnet. Ist die Menge
+  der Punkte ungerade, ist die Berechnung trivial, man nimmt den mittleren Punkt auf der x- respektive y-Achse. Ist die
+  Menge der Punkte gerade nimmt man entweder den Punkt aus der unteren oder oberen Mitte.
+</p>
+
+<h3>Punkte hinzufügen</h3>
+<p>
+  Wie beim BSP Tree besprochen muss die Berechnung des Kd Tree nicht alle Punkte aufteilen. Sondern man fährt so lange
+  fort wie es Sinn macht. Restliche Punkte kann man den bestehenden Nodes als Liste anhängen. Dazu müsste im obigen
+  Pseudo Code die Node Klasse so geschrieben sein, dass sie eine Liste von Punkten enthalten kann. Um also einen Punkt
+  hinzuzufügen traversiert man den Baum und hängt bei der letzten angetroffenen Node den Punkt an. Alternativ kann man
+  den Kd Tree auch weiterführen.
+</p>
+
+<p>
+  Werden Punkte dynamisch hinzugefügt und der Kd Tree weitergeführt, ist es wahrscheinlich, dass der Baum nicht mehr
+  balanciert ist und keine guten Suchzeiten mehr garantieren kann. Ein Neubalancieren des Kd Trees ist nicht einfach,
+  weil die Rotationsmethode nicht angewendet werden kann weil es beim Kd Tree sich um ein mehrdimensionalen Baum
+  handelt. Es gibt aber Methoden wie man es bewerkstelligen könnte. Darauf gehe ich jetzt aber nicht ein.
+</p>
+
+<h3>Punkte entfernen</h3>
+<p>
+  Es gibt mehrere Varianten wie Punkte entfernt werden können. Die naivste wäre wohl die Punkte einfach aus den Nodes
+  herauszulöschen aber die Nodes so zu lassen wie sie sind. Bleibt die räumliche Verteilung der Punkte in etwa gleich,
+  könnte das eine schnelle Möglichkeit sein. Anderseits kann man auch den Teilbaum neuberechnen der unter der Node mit
+  dem Punkt ist. Wenn aber ein Punkt entfernt ist der weit oben im Baum ist, muss jeweils viel neuberechnet werden. Eine
+  weitere Möglichkeit ist, für den gelöschten Punkt einen Ersatz in der Nähe zu finden. Das verschiebt den Teilbaum ein
+  wenig und Teile müssen neu berechnet werden, jedoch nicht der ganze.
 </p>

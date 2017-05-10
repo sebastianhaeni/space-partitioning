@@ -1,2 +1,19 @@
 <h3>Bins</h3>
-TODO https://en.wikipedia.org/wiki/Bin_(computational_geometry)
+<p>
+  Bins (Englisch für Eimer) sind eine weitere Möglichkeit Objekte in einem Raum abzufragen. Eine Bin-Datenstruktur
+  unterteilt den Raum in achsenausgerichtete Eimer. Jeder Eimer ist gleich gross.
+</p>
+
+<figure>
+  <img src="images/bin.png">
+  <figcaption>Bin (Quelle: Wikipedia)</figcaption>
+</figure>
+
+<p>
+  Zu jedem Bin wird gibt es eine Liste welche Objekte sich darin befinden. Ein Objekt kann in mehreren Bins vorkommen.
+  Ich kann also zum Beispiel abfragen was sich mit der Region <code>Q</code> schneidet. Diese Abfrage würde im obigen
+  Beispiel <code>C</code>, <code>D</code>, <code>E</code> und <code>F</code> zurückgeben. Dies sind nur Kandidaten.
+  Um herauszufinden welche Objekte meine Region <code>Q</code> wirklich schneiden muss ich für jedes Objekt einen Test
+  durchführen. Hätte ich keine Bins müsste ich sämtliche Objekte durchtesten. Von der Region <code>Q</code> auf die sich
+  schneidenden Bins zu kommen, ist mit einfachen Bit Operationen möglich.
+</p>
