@@ -1,1 +1,27 @@
 <h3><a name="r-tree">R-Tree</a></h3>
+<p>
+  Kommen wir nun zu zwei Dimensionen beziehungsweise zurück zu unserem Navi Problem. Der R-Tree löst das Windowing
+  effizient. Nicht nur die CPU wird geschont, auch ist der R-Tree so aufgebaut, dass Teilbäume in Pages gespeichert
+  werden, die auf einer Festplatte abgelegt werden und schnell wieder gelesen werden können. Nämlich genau das ist beim
+  Navi Beispiel ungemein wichtig, weil die ganze Erde nicht im Speicher gehalten werden kann. Nicht einmal ein Baum
+  davon. Der R-Tree hat sein R von Rectangle. Die Nodes in einem R-Tree, der übrigens vom B-Tree abgeleitet ist, sind
+  Rechtecke. Und wie vom B-Tree bekannt, können Nodes mehr als zwei Children haben.
+</p>
+
+<figure>
+  <img src="images/r-tree.png">
+  <figcaption>R-Tree</figcaption>
+</figure>
+
+<h4>Einfügen</h4>
+<p>
+  Die Idee ist ein Node-Rechteck enthält sämtliche Children Node-Rechtecke. Um ein Punkt, Rechteck bzw. ein MBR (minimum
+  bounding rectangle) einzufügen geht man wie folgt vor: Der Baum wird rekursiv startend beim Root Node traversiert. An
+  jeder Node werden sämtliche Child-Nodes analysiert und mit einer Heuristik bewertet welche am besten passt. Diese
+  Heuristik bewertet zum Beispiel um viel die Child-Node vergrössert werden müsste und wählt den geringsten
+  Vergrösserungsfaktor. Die Suche geht solange weiter bis eine Blatt-Node erreicht wird. Dort kann eingefügt werden. Ist
+  jedoch die Blatt-Node bereits voll, anhand der eingestellten Einschränken des R-Trees, muss diese Node aufgeteilt
+  werden. Dies muss wieder mit einer Heuristik geschehen, da ein erschöpfender Algorithmus zu langsam wäre. Die neue
+  Node wird der darüber liegenden Node angehängt. Ist diese jedoch auch schon voll propagiert es weiter nach oben bis
+  zum Root-Node. Passiert das, wird eine neue Root-Node erstellt.
+</p>
