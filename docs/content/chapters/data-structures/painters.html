@@ -12,9 +12,9 @@
 
 <p>
   Einer der ersten Algorithmen zur Lösung dieses Problems war der Painters Algorithmus. Er heisst so weil ungefähr so
-  funktioniert wie ein Maler eine Zeichnung macht. Nebenbei gibt es auch den z-Buffer Algorithmus welcher der häufigsten
-  verwendete Algorithmus zu Hidden Surface Removal verwendet wird. Er hat aber den Nachteil, dass er viel Speicher und
-  einen extra Test auf der Z-Koordinate benötigt.
+  funktioniert wie ein Maler eine Zeichnung macht. Nebenbei gibt es auch den z-Buffer Algorithmus. Dieser ist der am
+  häufigsten verwendete Algorithmus zu Hidden Surface Removal. Er hat aber den Nachteil, dass er viel Speicher und einen
+  extra Test auf der Z-Koordinate benötigt.
 </p>
 
 <p>
@@ -33,7 +33,7 @@
 </figure>
 
 <p>
-  Um solche Abbilder auf den Bildschirm zu bringen müssen wir den Algorithmus erweitern. Irgeneine der Flächen im oberen
+  Um solche Abbilder auf den Bildschirm zu bringen müssen wir den Algorithmus erweitern. Irgendeine der Flächen im oberen
   Beispiel muss unterteilt werden in ein Dreieck und ein Viereck. Danach können wir die Flächen neu sortieren und
   erfolgreich korrekt zeichnen. Dies kostet nun aber einiges an Rechenaufwand welchen wir gerne nicht mehrmals machen.
   Dazu können wir das in einer passenden Datenstruktur abspeichern. Das ist der binäre raumunterteilende Baum oder auch

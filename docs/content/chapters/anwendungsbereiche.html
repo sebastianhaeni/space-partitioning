@@ -25,16 +25,16 @@
 
   <p>
     Seit 1970 wurde die Branch and Bound Methode verwendet um das Problem zu lösen. Branch and Bound wird für
-    Natürliche-Zahlen-Optimierungsprobleme angewendet. Also für Probleme in welchen die Variabeln natürliche Zahlen
-    sind. Häufig, aber nicht immer, sind die Variabeln 1 oder 0. Ein Beispiel dafür wäre das Knapsack Problem auf
+    Natürliche-Zahlen-Optimierungsprobleme angewendet. Also für Probleme in welchen die Variablen natürliche Zahlen
+    sind. Häufig, aber nicht immer, sind die Variablen 1 oder 0. Ein Beispiel dafür wäre das Knapsack Problem auf
     welches ich jetzt nicht weiter eingehe.
   </p>
 
   <p>
     Mehrere raumunterteilende Methoden wurden entwickelt um die Nearest Neighbor Suche zu lösen, eine davon,
-    wahrscheinlich die einfachst, heisst <a href="#kd-tree">Kd Tree</a>. Der Kd Tree unterteilt den Suchraum iterativ in
+    wahrscheinlich die einfachste, heisst <a href="#kd-tree">Kd Tree</a>. Der Kd Tree unterteilt den Suchraum iterativ in
     zwei Unterräume die je die Hälfte der Punkte enthalten. Dieser ist jedoch nicht sehr geeignet wenn sich der Suchraum
-    dynamisch verändert. Deshalb wurder der <a href="#r-tree">R Tree</a> entwickelt, welcher effiziente Algorithmen für
+    dynamisch verändert. Deshalb wurde der <a href="#r-tree">R Tree</a> entwickelt, welcher effiziente Algorithmen für
     das Einfügen und Löschen von Punkten hat.
   </p>
 
@@ -42,10 +42,10 @@
   <p>
     In Ray Tracing Applikationen werden Strahlen durch jedes anzuzeigende Pixel geschossen um zu berechnen welche Farbe
     es hat. Das ist offensichtlich ohne weitere Optimierungen kaum in Echtzeit lösbar. Verbesserungen der Performance
-    können durch die Wahl von optimalen Kollisionsgeometrien, moderne Implentationen von Schnittpunktalgorithmen mit
-    Object Bounding und Volumen sowie durch parallere Berechnung gewonnen werden. Ein grosser Gewinn an Performance
+    können durch die Wahl von optimalen Kollisionsgeometrien, moderne Implementationen von Schnittpunktalgorithmen mit
+    Object Bounding und Volumen sowie durch parallele Berechnung gewonnen werden. Ein grosser Gewinn an Performance
     erhält man durch die Benutzung einer raumunterteilenden Datenstruktur. Die einfachste Möglichkeit ist ein uniformes
-    Raster. Dies ist einfach zu implentieren und hat fast keinen Verwaltungsaufwand. Mit <a href="#kd-tree">Kd Trees</a>
+    Raster. Dies ist einfach zu implementieren und hat fast keinen Verwaltungsaufwand. Mit <a href="#kd-tree">Kd Trees</a>
     oder <a href="#octree">Octrees</a> kann aber noch mehr herausgeholt werden.
   </p>
 

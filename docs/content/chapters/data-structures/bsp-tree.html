@@ -46,11 +46,11 @@
   <b>Wahl der Teilebene:</b>
   Die Wahl der Teilebene ist abhängig vom Anwendungsfall und welche Effizientskriterien wir für die Konstruktion haben.
   Für einige Anwendungen kann es sinnvoll sein die Teilebene von der Liste der Polygone abzuleiten, für andere macht es
-  mehr Sinn wenn die Teilebene senkrecht an den Achsen ausgerichtet ist.
+  mehr Sinn, wenn die Teilebene senkrecht an den Achsen ausgerichtet ist.
 </p>
 
 <p>
-  Ein gutes Ziel ist ein balancierter Baum. Balanciert ist ein Baum wenn jedes Blatt ungefähr die selbe Menge an
+  Ein gutes Ziel ist ein balancierter Baum. Balanciert ist ein Baum, wenn jedes Blatt ungefähr dieselbe Menge an
   Polygonen hat. Das ist aber nur mit hohem Rechenaufwand erreichbar. Eine schlechte Wahl der Teilebene kann viele
   Teilfragmente zur Folge haben und dadurch viele Polygone an den Blättern erzeugen. Normalerweise macht man ein Trade
   Off zwischen Balance und Anzahl Teilungen.
@@ -58,10 +58,10 @@
 
 <p>
   <b>Teilfragmente:</b>
-  Die Unterteilung von Polygonen in Fragemente ist die Klassifikation jedes Polygon-Objektes der Menge in Abhängigkeit
-  der Teilebene. Ist ein Poylgon zur einen oder anderen Seite der Trennlinie, wird es nicht modifiziert und wird zur
+  Die Unterteilung von Polygonen in Fragmente ist die Klassifikation jedes Polygon-Objektes der Menge in Abhängigkeit
+  der Teilebene. Ist ein Polygon zur einen oder anderen Seite der Trennlinie, wird es nicht modifiziert und wird zur
   Teilmenge der Seite zu der es gehört zugeordnet. Überschneiden sich Trennlinie und Polygon wird es in zwei oder mehr
-  Fragemente zerteilt. Die resultierenden Fragmente werden den beiden Seiten zugeordnet.
+  Fragmente zerteilt. Die resultierenden Fragmente werden den beiden Seiten zugeordnet.
 </p>
 
 <p>
@@ -135,7 +135,7 @@
 
 <p>
   Diese Implementation nimmt an, dass alle Polygone konvex sind. Konvex heisst, von jedem Punkt des Polygons kann ohne
-  verlassen des Polygons ein beliebiger anderer Punkt erreicht werden. Auch kann die Implementation verbessert werden in
+  Verlassen des Polygons ein beliebiger anderer Punkt erreicht werden. Auch kann die Implementation verbessert werden in
   dem die Teilebene (Partition) intelligenter ausgewählt wird.
 </p>
 
@@ -181,7 +181,7 @@ void render(BspTree tree) {
   Ein BSP Baum zu berechnen kostet viel CPU Zeit. Deshalb will man das nicht für jedes Frame machen. BSP Trees verwendet
   man in der Regel nur für statische Geometrien. Eine der ersten Anwendung in der BSP Trees angewendet wurde war das
   Spiel <a href="#ref-doom-bsp-tree">Doom</a>. Darin wird der BSP Baum beim Laden des Levels berechnet was einige Zeit
-  dauern kann wenn es ein grosses Level ist. Dynamische Objekte werden dann in Kombination eines Z-Buffers gezeichnet.
+  dauern kann, wenn es ein grosses Level ist. Dynamische Objekte werden dann in Kombination eines Z-Buffers gezeichnet.
 </p>
 
 

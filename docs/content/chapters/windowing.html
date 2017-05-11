@@ -1,6 +1,17 @@
 <div class="chapter">
   <h2 class="break">Windowing</h2>
 
+  <p>
+    Heutzutage haben fast alle Personenwagen ein eingebautes Navigationsgerät. Das Navi zeigt dem Fahrer wo er
+    durchfahren muss indem es ihm einen Kartenausschnitt präsentiert. Der Kartenausschnitt ist Teil einer grösseren
+    Karte die ein Land oder sogar einen ganzen Kontinent oder manchmal sogar die ganze Erde enthält. Das Navi muss
+    dann entscheiden welche Objekte es jetzt gerade in diesem Kartenausschnitt darstellen muss. Der Brute Force Ansatz
+    funktioniert nicht, weil dazu Millionen von Objekten geprüft werden müssen, ob diese im Kartenausschnitt sichtbar
+    sind. Was das Navi macht nennt man ein Windowing Query. Es fragt eine Datenstruktur mit einer Boundary ab und erhält
+    die darin enthaltenen Objekte. Windowing Queries sind ähnlich wie orthogonale Bereichssuche, sind aber meist
+    limitiert auf 2 oder 3 Dimensionen.
+  </p>
+
   {% include "./data-structures/interval-tree.html" %}
   {% include "./data-structures/r-tree.html" %}
 </div>
