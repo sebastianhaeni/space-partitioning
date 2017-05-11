@@ -1,1 +1,89 @@
 <h3>Interval Tree</h3>
+<p>
+  Um nicht gleich mit 2 oder 3 Dimensionen zu beginnen beschäftigen wir uns zuerst mit einer Dimension. Wir stellen uns
+  vor wir haben ein Zeitstrahl. Auf diesem Zeitstrahl befinden sich verschiedene Intervalle. Als Beispiel können wir die
+  Prüfungen nehmen. Es finden Prüfungen unterschiedlicher Länge zu unterschiedlichen Zeitpunkten statt. Einige Prüfungen
+  überschneiden sich zeitlich.
+</p>
+
+<figure>
+  <img src="images/intervals.png">
+  <figcaption>Intervalle auf Zeitstrahl</figcaption>
+</figure>
+
+<p>
+  Würden sich die Intervalle nicht überlappen, könnten wir den einfachen Weg gehen und die Intervalle einfach in einen
+  Binärbaum packen und schon könnten wir sie mit O(log n) Zeit abfragen. Nur sind sie halt überlappend. In einer ersten
+  Überlegung könnte man auf Idee kommen einfach zwei Bäume zu bauen für die Start- und Endzeit. Beide Bäume können in
+  O(log n) Zeit abgefragt werden. Weil sie aber wieder mit O(n) Zeit zusammengeführt werden müssen, enden wir mit einer
+  Abfragezeit von O(n + log n) = O(n) was nicht besser ist als der Brute Force Ansatz.
+</p>
+
+<h4>Konstruktion</h4>
+<p>
+  Ein Interval Tree kann rekursiv konstruiert werden. In einem Schritt werden als Eingabeparameter die Menge der
+  Intervalle übergeben. Der Algorithmus separiert diese in drei Kategorien. Eine Kategorie sind die Intervalle, die sich
+  links vom Median befinden, eine andere die Intervalle rechts des Median. Und dann gibt es noch die Intervalle die den
+  Median schneiden. Die schneidenden Intervalle werden in einer speziellen Datenstruktur abgelegt. Diese Datenstruktur
+  enthält zwei sortierte Mengen der Intervalle. Es wird einmal nach Start- und einmal nach Enddatum sortiert. Diese
+  Struktur wird der aktuellen Node angehängt. Mit den Intervallen links und rechts wird der Baum nun weitergebaut.
+</p>
+
+<figure>
+<pre><code>class Interval {
+  int start;
+  int end;
+}
+
+class Node {
+  int value;
+  SortedIntervals mid;
+  Node left;
+  Node right;
+}
+
+class SortedIntervals {
+  SortedSet&lt;Interval&gt; startpoints;
+  SortedSet&lt;Interval&gt; endpoints;
+}
+</code></pre>
+  <figcaption>Struktur Interval Tree Node</figcaption>
+</figure>
+<figure>
+<pre><code>Node buildIntervalTree(Set&lt;Interval&gt; intervals) {
+  Node node = new Node();
+
+  if(intervals.isEmpty()) {
+    return node;
+  }
+
+  int endMedian = calcEndpointMedian(intervals);
+  {leftIntervals, midIntervals, rightIntervals} = classify(intervals, endMedian);
+
+  node.value = endMedian;
+  node.mid = midIntervals;
+  node.left = buildIntervalTree(leftIntervals);
+  node.right = buildIntervalTree(rightIntervals);
+
+  return node;
+}
+</code></pre>
+  <figcaption>Algorithmus: Konstruktion Interval Tree</figcaption>
+</figure>
+
+<h4>Intervall einfügen und entfernen</h4>
+<p>
+  Das Einfügen und Entfernen von Intervallen in Interval Trees funktioniert ähnlich mit Rotation wie bei einem normalen
+  balancierten Binärbaum. Nach der Änderung im Baum müssen jedoch die Intervalle neu gesucht werden die die nach oben
+  geschobene Node überlappen. Diese müssen dann dahin geschoben werden. Als Konsequenz kann es sein, dass es eine neue
+  leere Node gibt. Diese kann mit dem selben Algorithmus gelöscht werden.
+</p>
+
+<figure>
+  <img src="images/interval-tree-deletion.png">
+  <figcaption>Node aus Interval Tree entfernen</figcaption>
+</figure>
+
+<p>
+  Einfügen und Entfernen brauchen O(log n) Zeit, wobei n die Anzahl Intervalle vor der Operation ist.
+</p>
