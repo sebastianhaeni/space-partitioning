@@ -161,7 +161,7 @@ figure {
     text-align: left;
   }
 
-  figcaption {
+  figcaption, .source {
     page-break-before: avoid;
     font-size: 0.75em;
   }
