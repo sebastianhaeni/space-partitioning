@@ -2,6 +2,12 @@ language: node_js
 node_js:
   - "7"
 before_script:
-  - npm install -g gulp-cli
   - npm install
-script: gulp
+script: npm run build
+deploy:
+  provider: pages
+  local_dir: build
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
+  on:
+    branch: master
