@@ -3,12 +3,16 @@
   "version": "0.0.1",
   "description": "Documentation of a study of space partitioning data structures",
   "scripts": {
-    "start": "npm run serve:open",
-    "serve:open": "node js/open.js http://localhost:3000 && gulp serve",
-    "serve": "gulp serve",
-    "build": "npm run build:html && npm run build:pdf && node js/open.js ./build/space-partitioning.pdf",
-    "build:html": "gulp",
-    "build:pdf": "prince --javascript build/index.html -o build/space-partitioning.pdf"
+    "start": "npm run docs",
+    "docs": "node js/open.js http://localhost:3000 && gulp serve:docs",
+    "serve:docs": "gulp serve:docs",
+    "slides": "node js/open.js http://localhost:3000 && gulp serve:slides",
+    "serve:slides": "gulp slides:serve",
+    "build": "gulp && npm run build:docs:pdf && node js/open.js ./build/docs/space-partitioning.pdf",
+    "build:docs": "npm run build:docs:html && npm run build:docs:pdf && node js/open.js ./build/docs/space-partitioning.pdf",
+    "build:docs:html": "gulp docs",
+    "build:docs:pdf": "prince --javascript build/docs/index.html -o build/docs/space-partitioning.pdf",
+    "build:slides": "gulp slides"
   },
   "repository": {
     "type": "git",
@@ -36,6 +40,7 @@
     "moment": "^2.17.1",
     "normalize.css": "^5.0.0",
     "nunjucks": "^3.0.0",
+    "reveal.js": "^3.5.0",
     "run-sequence": "^1.2.2",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"

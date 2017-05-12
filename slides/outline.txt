@@ -1,0 +1,11 @@
+- Einleitung
+- Anwendungsbereiche
+- Binary Space Partitioning
+  - Painters Algorithm
+  - BSP Tree
+- Orthogonale Bereichsuche
+  - Kd Tree
+  - Bins
+- Windowing
+  - Interval Tree
+  - R Tree
