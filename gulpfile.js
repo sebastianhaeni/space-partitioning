@@ -14,8 +14,9 @@ const moment = require('moment');
 
 const pkg = JSON.parse(fs.readFileSync('./package.json'));
 
-gulp.task('default', ['docs', 'slides']);
+gulp.task('default', ['root', 'docs', 'slides']);
 
+gulp.task('root', () => gulp.src('index.html').pipe(gulp.dest('build')));
 gulp.task('docs', () => runSequence('clean:docs', ['docs:nunjucks', 'docs:js', 'docs:style', 'docs:images', 'docs:deps']));
 gulp.task('slides', () => runSequence('clean:slides', ['slides:nunjucks', 'slides:js', 'slides:style', 'slides:images', 'slides:deps']));
 
