@@ -3,7 +3,7 @@ node_js:
   - "7"
 before_script:
   - npm install
-script: npm run build
+script: gulp
 deploy:
   provider: pages
   local_dir: build
