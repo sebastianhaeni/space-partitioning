@@ -1,4 +1,5 @@
 # Space Partitioning Data Structures
+[![Build Status](https://travis-ci.org/sebastianhaeni/space-partitioning.svg?branch=master)](https://travis-ci.org/sebastianhaeni/space-partitioning)
 
 Docs and slides about space partitioning data structures.
 
