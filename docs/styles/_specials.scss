@@ -1,14 +1,19 @@
 .front {
   page: front;
-}
 
-.front .cover {
-  margin-bottom: 15em;
-}
+  .cover {
+    margin-bottom: 15em;
+  }
 
-.front td {
-  border: none;
-  font-size: 1em;
+  td {
+    border: none;
+    font-size: 1em;
+    padding: 6.4px 0;
+  }
+
+  tr td:first-child {
+    width: 90px;
+  }
 }
 
 #toc,
