@@ -16,19 +16,19 @@
 
 <h4>Einfügen</h4>
 <p>
-  Die Idee ist ein Node-Rechteck enthält sämtliche Children Node-Rechtecke. Um ein Punkt, Rechteck bzw. ein MBR (minimum
-  bounding rectangle) einzufügen geht man wie folgt vor: Der Baum wird rekursiv startend beim Root Node traversiert. An
-  jeder Node werden sämtliche Child-Nodes analysiert und mit einer Heuristik bewertet welche am besten passt. Diese
-  Heuristik bewertet zum Beispiel um viel die Child-Node vergrössert werden müsste und wählt den geringsten
-  Vergrösserungsfaktor. Die Suche geht solange weiter bis eine Blatt-Node erreicht wird. Dort kann eingefügt werden. Ist
-  jedoch die Blatt-Node bereits voll, anhand der eingestellten Einschränken des R-Trees, muss diese Node aufgeteilt
-  werden. Dies muss wieder mit einer Heuristik geschehen, da ein erschöpfender Algorithmus zu langsam wäre. Die neue
-  Node wird der darüber liegenden Node angehängt. Ist diese jedoch auch schon voll propagiert es weiter nach oben bis
-  zum Root-Node. Passiert das, wird eine neue Root-Node erstellt.
+  Die Idee ist dass ein Node-Rechteck sämtliche Children Node-Rechtecke umschliesst. Um ein Punkt, Rechteck bzw. ein MBR
+  (minimum bounding rectangle) einzufügen, geht man wie folgt vor: Der Baum wird rekursiv startend beim Root Node
+  traversiert. An jeder Node werden sämtliche Child-Nodes analysiert und mit einer Heuristik bewertet welche am besten
+  passt. Diese Heuristik bewertet zum Beispiel um wie viel die Child-Node vergrössert werden müsste und wählt den
+  geringsten Vergrösserungsfaktor. Die Suche geht solange weiter bis eine bestehende Blatt-Node erreicht wird. Dort kann
+  eingefügt werden. Ist jedoch die Blatt-Node bereits voll (anhand der gewählten Einschränkungen), muss diese Node
+  aufgeteilt werden. Dies muss wieder mit einer Heuristik geschehen, da ein erschöpfender Algorithmus zu langsam wäre.
+  Die neue Node wird der darüber liegenden Node angehängt. Ist diese jedoch auch schon voll propagiert es weiter nach
+  oben bis zum Root-Node. Passiert das, wird eine neue Root-Node erstellt.
 </p>
 
 <p id="ref-wikipedia-r-tree" class="reference-item">
-  <span class="ref">Wikipedia - R-Tree</span>
+  <span class="ref">Wikipedia: R-Tree</span>
   <a href="https://en.wikipedia.org/wiki/R-tree" target="_blank">https://en.wikipedia.org/wiki/R-tree</a>
   <span class="retreived">12. Mai 2017</span>
 </p>

@@ -4,12 +4,12 @@
   "description": "Documentation of a study of space partitioning data structures",
   "scripts": {
     "start": "npm run docs",
-    "docs": "node js/open.js http://localhost:3000 && gulp serve:docs",
+    "docs": "node util/open.js http://localhost:3000 && npm run serve:docs",
     "serve:docs": "gulp serve:docs",
-    "slides": "node js/open.js http://localhost:3000 && gulp serve:slides",
+    "slides": "node util/open.js http://localhost:3000 && npm run serve:slides",
     "serve:slides": "gulp slides:serve",
-    "build": "gulp && npm run build:docs:pdf && node js/open.js ./build/docs/space-partitioning.pdf",
-    "build:docs": "npm run build:docs:html && npm run build:docs:pdf && node js/open.js ./build/docs/space-partitioning.pdf",
+    "build": "gulp && npm run build:docs:pdf && node util/open.js ./build/docs/space-partitioning.pdf",
+    "build:docs": "npm run build:docs:html && npm run build:docs:pdf && node util/open.js ./build/docs/space-partitioning.pdf",
     "build:docs:html": "gulp docs",
     "build:docs:pdf": "prince --javascript build/docs/index.html -o build/docs/space-partitioning.pdf",
     "build:slides": "gulp slides"

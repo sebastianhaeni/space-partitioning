@@ -40,8 +40,8 @@
   <li>Fahre rekursiv mit beiden Halbebenen fort</li>
 </ol>
 
+<h4>Wahl der Teilebene</h4>
 <p>
-  <b>Wahl der Teilebene:</b>
   Die Wahl der Teilebene ist abhängig vom Anwendungsfall und welche Effizienzkriterien wir für die Konstruktion haben.
   Für einige Anwendungen kann es sinnvoll sein die Teilebene von der Liste der Polygone abzuleiten, für andere macht es
   mehr Sinn, wenn die Teilebene senkrecht an den Achsen ausgerichtet ist.
@@ -54,26 +54,25 @@
   Off zwischen Balance und Anzahl Teilungen.
 </p>
 
+<h4>Teilfragmente</h4>
 <p>
-  <b>Teilfragmente:</b>
   Die Unterteilung von Polygonen in Fragmente ist die Klassifikation jedes Polygon-Objektes der Menge in Abhängigkeit
   der Teilebene. Ist ein Polygon zur einen oder anderen Seite der Trennlinie, wird es nicht modifiziert und wird zur
   Teilmenge der Seite zu der es gehört zugeordnet. Überschneiden sich Trennlinie und Polygon wird es in zwei oder mehr
   Fragmente zerteilt. Die resultierenden Fragmente werden den beiden Seiten zugeordnet.
 </p>
 
+<h4>Stoppbedingung</h4>
 <p>
-  <b>Stoppbedingung:</b>
   Wann genau aufgehört wird den Baum zu berechnen ist wiederum anwendungsbedingt. Ein mögliches Kriterium kann eine
   maximale Fragment Anzahl bei einem Blatt sein. Ein idealer BSP Baum hätte das Maximum von 1. Oder man fährt solange
   fort bis jedes Polygon in einem internen Blatt vorhanden ist. Oder man limitiert die Baumtiefe.
 </p>
 
+<h4>Pseudo Code Konstruktion BSP Tree:</h4>
 <p>
-  <b>Pseudo Code Konstruktion BSP Tree:</b>
   Die folgenden Code Listings zeigen die Struktur der BspTree Klasse und der Algorithmus zur Konstruktion des Baumes.
 </p>
-
 
 <figure class="affix">
 <pre><code>class BspTree {
@@ -197,7 +196,7 @@ void render(BspTree tree) {
       <td>O(n<sup>2</sup>)</td>
     </tr>
     <tr>
-      <td>Zeit</td>
+      <td>Konstruktion</td>
       <td>O(n<sup>3</sup>)</td>
     </tr>
     <tr>
@@ -218,7 +217,7 @@ void render(BspTree tree) {
 </figure>
 
 <p id="ref-faqs-bsp-tree" class="reference-item">
-  <span class="ref">faqs.org Erklärung der BSP Tree Konstruktion</span>
+  <span class="ref">faqs.org: Erklärung der BSP Tree Konstruktion</span>
   <a href="http://www.faqs.org/faqs/graphics/bsptree-faq"
      target="_blank">http://www.faqs.org/faqs/graphics/bsptree-faq</a>
   <span class="retreived">7. Mai 2017</span>
