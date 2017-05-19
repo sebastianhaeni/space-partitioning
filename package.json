@@ -1,6 +1,6 @@
 {
   "name": "space-partitioning-docs",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Documentation of a study of space partitioning data structures",
   "scripts": {
     "start": "npm run docs",
