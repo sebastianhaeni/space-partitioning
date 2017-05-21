@@ -129,7 +129,7 @@ gulp.task('serve:slides', ['slides'], () => {
     runSequence('slides:style', () => server.notify.apply(server, [file]));
   });
   gulp.watch('slides/**/*.html', (file) => {
-    runSequence('slides:nunjucks', () => server.notify.apply(server, [file]));
+    runSequence('slides:nunjucks', () => setTimeout(() => server.notify.apply(server, [file]), 100));
   });
   gulp.watch('slides/js/**/*.js', (file) => {
     runSequence('slides:js', () => server.notify.apply(server, [file]));

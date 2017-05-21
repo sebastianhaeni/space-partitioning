@@ -24,9 +24,9 @@ export default class KdTreeController {
   static get nodeOffsets() {
     return {
       0: 0,
-      1: 235,
-      2: 120,
-      3: 60,
+      1: 110,
+      2: 60,
+      3: 30,
       4: 40,
       5: 20,
       6: 10
@@ -110,7 +110,7 @@ export default class KdTreeController {
     KdTreeController.treeCtx.stroke();
 
     if (node.locator instanceof Point) {
-      KdTreeController.treeCtx.fillStyle = '#ccc';
+      KdTreeController.treeCtx.fillStyle = 'green';
     } else {
       KdTreeController.treeCtx.fillStyle = '#fff';
     }
