@@ -7,7 +7,7 @@
     "docs": "node util/open.js http://localhost:3000 && npm run serve:docs",
     "serve:docs": "gulp serve:docs",
     "slides": "node util/open.js http://localhost:3000 && npm run serve:slides",
-    "serve:slides": "gulp slides:serve",
+    "serve:slides": "gulp serve:slides",
     "build": "gulp && npm run build:docs:pdf && node util/open.js ./build/docs/space-partitioning.pdf",
     "build:docs": "npm run build:docs:html && npm run build:docs:pdf && node util/open.js ./build/docs/space-partitioning.pdf",
     "build:docs:html": "gulp docs",

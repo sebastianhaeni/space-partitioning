@@ -181,40 +181,11 @@ void render(BspTree tree) {
   dauern kann, wenn es ein grosses Level ist. Dynamische Objekte werden dann in Kombination eines Z-Buffers gezeichnet.
 </p>
 
-
 <h3>Komplexität</h3>
 <p>
-  Fazit ist, einfügen und löschen von Objekten in einem BSP Tree erfordern die Neuberechnung des Baumes. Das macht den
-  BSP Baum ungeeignet für dynamische Szenen.
+  Fazit ist, Einfügen und Löschen von Objekten in einem BSP Tree haben die selbe Zeitkomplexität wie die Neuberechnung
+  des Baumes von O(n<sup>3</sup>). Das macht den BSP Baum ungeeignet für dynamische Szenen.
 </p>
-
-<figure>
-  <table>
-    <tbody>
-    <tr>
-      <td>Speicher</td>
-      <td>O(n<sup>2</sup>)</td>
-    </tr>
-    <tr>
-      <td>Konstruktion</td>
-      <td>O(n<sup>3</sup>)</td>
-    </tr>
-    <tr>
-      <td>Abfrage</td>
-      <td>O(n)</td>
-    </tr>
-    <tr>
-      <td>Polygon einfügen</td>
-      <td>O(n<sup>3</sup>)</td>
-    </tr>
-    <tr>
-      <td>Polygon löschen</td>
-      <td>O(n<sup>3</sup>)</td>
-    </tr>
-    </tbody>
-  </table>
-  <figcaption>BSP Tree Komplexitäten</figcaption>
-</figure>
 
 <p id="ref-faqs-bsp-tree" class="reference-item">
   <span class="ref">faqs.org: Erklärung der BSP Tree Konstruktion</span>

@@ -91,7 +91,7 @@ gulp.task('slides:nunjucks', function () {
 });
 
 gulp.task('slides:js', () => {
-  gulp.src('slides/js/**/*.js')
+  gulp.src('slides/**/*.js')
     .pipe(gulp.dest('build/slides'));
 });
 
@@ -116,7 +116,7 @@ gulp.task('slides:deps:styles', () => {
 });
 
 gulp.task('slides:images', () => {
-  gulp.src('slides/images/**/*.{png,jpg,gif,svg}')
+  gulp.src('slides/images/**/*.{png,jpg,gif,svg,mp4}')
     .pipe(gulp.dest('build/slides/images'));
 });
 
@@ -134,7 +134,7 @@ gulp.task('serve:slides', ['slides'], () => {
   gulp.watch('slides/js/**/*.js', (file) => {
     runSequence('slides:js', () => server.notify.apply(server, [file]));
   });
-  gulp.watch('slides/images/**/*.{png,jpg,gif,svg}', (file) => {
+  gulp.watch('slides/images/**/*.{png,jpg,gif,svg,mp4}', (file) => {
     runSequence('slides:images', () => server.notify.apply(server, [file]));
   });
 });
