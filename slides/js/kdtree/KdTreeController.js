@@ -77,7 +77,6 @@ export default class KdTreeController {
       KdTreeController.spaceCtx.fillStyle = '#ddd';
 
     this.points.forEach(function (point) {
-      console.log(point);
       KdTreeController.spaceCtx.beginPath();
       KdTreeController.spaceCtx.arc(point.x, point.y, 2, 0, 2 * Math.PI);
       KdTreeController.spaceCtx.stroke();
