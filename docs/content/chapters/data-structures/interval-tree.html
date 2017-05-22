@@ -13,10 +13,11 @@
 
 <p>
   Würden sich die Intervalle nicht überlappen, könnten wir den einfachen Weg gehen und die Intervalle einfach in einen
-  Binärbaum packen und schon könnten wir sie mit O(log n) Zeit abfragen. Nur sind sie halt überlappend. In einer ersten
-  Überlegung könnte man auf die Idee kommen einfach zwei Bäume zu bauen für die Start- und Endzeit. Beide Bäume können
-  in O(log n) Zeit abgefragt werden. Weil sie aber wieder mit O(n) Zeit zusammengeführt werden müssen, enden wir mit
-  einer Abfragezeit von O(n + log n) = O(n) was nicht besser ist als der Brute Force Ansatz.
+  Binärbaum packen und schon könnten wir sie mit <span class="nobr">O(log n)</span> Zeit abfragen. Nur sind sie halt
+  überlappend. In einer ersten Überlegung könnte man auf die Idee kommen einfach zwei Bäume zu bauen für die Start- und
+  Endzeit. Beide Bäume können in <span class="nobr">O(log n)</span> Zeit abgefragt werden. Weil sie aber wieder mit O(n)
+  Zeit zusammengeführt werden müssen, enden wir mit einer Abfragezeit von <span class="nobr">O(n + log n) = O(n)</span>
+  was nicht besser ist als der Brute Force Ansatz.
 </p>
 
 <h4>Konstruktion</h4>
@@ -86,7 +87,8 @@ class SortedIntervals {
 </figure>
 
 <p>
-  Einfügen und Entfernen brauchen O(log n) Zeit, wobei n die Anzahl Intervalle vor der Operation ist.
+  Einfügen und Entfernen brauchen <span class="nobr">O(log n)</span> Zeit, wobei n die Anzahl Intervalle vor der
+  Operation ist.
 </p>
 
 <p id="ref-wikipedia-interval-tree" class="reference-item">

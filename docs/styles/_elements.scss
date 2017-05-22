@@ -38,6 +38,10 @@ pre code {
   page-break-inside: avoid;
 }
 
+.nobr {
+  white-space: nowrap;
+}
+
 pre code.long {
   font-size: $font-size-small;
   page-break-inside: auto;

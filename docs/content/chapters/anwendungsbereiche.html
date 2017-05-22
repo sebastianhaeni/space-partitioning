@@ -8,7 +8,8 @@
     Raumunterteilung ist ein hilfreiches Werkzeug um in Computerspielen oder sonstigen Computersimulationen mit einer 2D
     oder 3D Grafik Collision Detection zu realisieren. Um zu detektieren welche Einheiten gerade in der Nähe des
     Hauptgebäudes sind kann man entweder naiv mit Brute Force durch die Liste aller Einheiten im Spiel iterieren oder
-    man verwendet einen raumunterteilenden Baum um die Einheiten schnell mit einer Komplexität von O(log N) zu finden.
+    man verwendet einen raumunterteilenden Baum um die Einheiten schnell mit einer Komplexität von <span class="nobr">O(log N)</span>
+    zu finden.
   </p>
 
   <h4>Nearest Neighbor</h4>
@@ -34,7 +35,7 @@
     Mehrere raumunterteilende Methoden wurden entwickelt um die Nearest Neighbor Suche zu lösen, eine davon,
     wahrscheinlich die einfachste, heisst <a href="#kd-tree">Kd Tree</a>. Der Kd Tree unterteilt den Suchraum iterativ
     in zwei Unterräume die je die Hälfte der Punkte enthalten. Dieser ist jedoch nicht sehr geeignet, wenn sich der
-    Suchraum dynamisch verändert. Deshalb wurde der <a href="#r-tree">R Tree</a> entwickelt, welcher effiziente
+    Suchraum dynamisch verändert. Deshalb wurde der <a href="#r-tree">R-Tree</a> entwickelt, welcher effiziente
     Algorithmen für das Einfügen und Löschen von Punkten hat.
   </p>
 
