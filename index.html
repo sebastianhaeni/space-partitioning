@@ -21,10 +21,17 @@
 
     .item {
       display: block;
-      font-size: 30px;
       margin: 13px 0;
+    }
+
+    a {
       text-decoration: none;
       color: #0d3349;
+    }
+
+    .item > a,
+    .container > a {
+      font-size: 30px;
     }
 
     a:hover {
@@ -39,6 +46,10 @@
       font-size: 15px;
       margin: 0;
     }
+
+    small {
+      font-size: 9px;
+    }
   </style>
 </head>
 <body>
@@ -49,8 +60,8 @@
   <a class="item" href="docs">Docs</a>
   <a class="item" href="slides">Slides</a>
   <div class="item">
-    <a href="slides/demos/kdtree.html">Kd Tree Demo</a>
-    <small>(enable <a href="https://jakearchibald.com/2017/es-modules-in-browsers/">ES modules</a>)</small>
+    <a href="slides/demos/kdtree.html">Kd Tree Demo</a><br>
+    <small>(enable <a href="https://jakearchibald.com/2017/es-modules-in-browsers/" target="_blank">ES modules</a>)</small>
   </div>
 
   <p class="credits">Made by <a href="https://sebastianhaeni.ch">Sebastian Häni</a></p>
