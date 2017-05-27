@@ -1,5 +1,5 @@
-import Node from './Node.js';
-import Split from './Split.js';
+import Node from "./Node.js";
+import Split from "./Split.js";
 
 export default class KdTree {
   static generate(points, depth, splitCount = 0) {
@@ -16,6 +16,9 @@ export default class KdTree {
     splitCount++;
     const {split, above, below} = KdTree.split(points, extractor, even, splitCount);
     const aboveNode = KdTree.generate(above, depth + 1, splitCount);
+    if (aboveNode !== undefined) {
+      splitCount++;
+    }
     const belowNode = KdTree.generate(below, depth + 1, splitCount);
 
     return new Node(split, aboveNode, belowNode);

@@ -30,14 +30,18 @@
 <section>
   <ol>
     <li>sortiere alle Objekte an der z-Koordinate</li>
-    <li class="fragment">erkenne Loops
+    <li class="fragment">erkenne Überschneidungen
       <ul style="list-style-type: none">
-        <li class="fragment">2.1 unterteile Objekt in zwei Flächen</li>
+        <li class="fragment">2.1 unterteile ein Objekt in zwei Flächen</li>
         <li class="fragment">2.1 gehe zu 1.</li>
       </ul>
     </li>
     <li>zeichne Objekte der Reihenfolge nach</li>
   </ol>
+</section>
+
+<section>
+  <img src="images/bsp-tree-cut.png">
 </section>
 
 <section>
@@ -84,13 +88,6 @@
     <line class="fragment" x1="530" y1="530" x2="0" y2="580" style="stroke: rgb(255,0,0); stroke-width: 2"></line>
     <line class="fragment" x1="190" y1="560" x2="185" y2="230" style="stroke: rgb(255,0,0); stroke-width: 2"></line>
   </svg>
-</section>
-
-<section>
-  <img src="images/bsp-tree.png">
-  <small class="source">Source: Computational Geometry - Algorithms and Applications, 3rd Edition Mark de Berg, Otfried Cheong,
-    Marc van Kreveld, Mark Overmars
-  </small>
 </section>
 
 <section>
@@ -175,5 +172,10 @@ switch(classify(v, node.partition) {
 
 <section>
   <h4>Dynamik</h4>
-  <p class="fragment">no, sorry</p>
+  <ul>
+    <li>nicht geeignet</li>
+    <li>Wird beim Laden des Levels berechnet</li>
+  </ul>
+
+  <p class="fragment">Einfügen und Neuberechnung haben die selbe Zeitkomplexität von O(n<sup>3</sup>)</p>
 </section>
