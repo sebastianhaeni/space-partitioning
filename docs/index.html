@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Raumunterteilende Datenstrukturen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Sebastian Häni">
+  <link rel="stylesheet" href="normalize.css/normalize.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
+  <link rel="stylesheet" href="main.css">
+  <script src="jquery/dist/jquery.min.js"></script>
+  <script src="doc.js"></script>
+</head>
+<body>
+
+<div class="front">
+  <p>
+    Berner Fachhochschule<br/>
+    Bachelor of Science in Computer Science<br/>
+    Informatik Seminar
+  </p>
+  <h1>Raumunterteilende Datenstrukturen</h1>
+  <p class="cover">
+    <img src="images/cover.png" width="400" height="341" alt=""/>
+  </p>
+  <table>
+    <tbody>
+    <tr>
+      <td>Student:</td>
+      <td>Sebastian Häni, <a href="mailto:haeni.sebastian@gmail.com">haeni.sebastian@gmail.com</a></td>
+    </tr>
+    <tr>
+      <td>Betreuer:</td>
+      <td>Peter Schwab, <a href="mailto:peter.schwab@bfh.ch">peter.schwab@bfh.ch</a></td>
+    </tr>
+    <tr>
+      <td>Version:</td>
+      <td class="version">1.0.1, <span>29.05.2017</span></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="chapter">
+  <p>
+    Diese Arbeit wurde als Teil des Informatik Seminar Moduls an der Berner Fachhochschule BFH geschrieben. Der Source
+    Code ist verfügbar online unter <a href="https://github.com/sebastianhaeni/space-partitioning">https://github.com/sebastianhaeni/space-partitioning</a>.
+    Die Dokumentation und die dazugehörigen Slides sind online verfügbar unter <a href="https://sebastianhaeni.github.io/space-partitioning">https://sebastianhaeni.github.io/space-partitioning</a>.
+  </p>
+
+  <p>
+    Alle Quellen sind nummeriert [<em>n</em>] und im Quellenverzeichnis im Appendix aufgelistet. Grundwissen in
+    Informatik und insbesondere in Algorithmen und Datenstrukturen werden zum Verständnis dieser Arbeit vorausgesetzt.
+    Die wichtigsten Abkürzungen und Konzepte sind im Glossar, der ebenfalls im Appendix gefunden werden kann, erklärt.
+  </p>
+
+  <p>
+    Dieses Dokument wurde in HTML geschrieben und mit <a href="#ref-prince">Prince</a> zu einer PDF Datei konvertiert.
+    Die verwendete Schriftart ist <em>Open Sans</em>, entworfen von Steve Matteson im Auftrag von Google.
+  </p>
+</div>
+
+
+<p id="ref-prince" class="reference-item">
+  <span class="ref">YesLogic Pty. Ltd.: Prince</span>
+  <a href="http://www.princexml.com" target="_blank">http://www.princexml.com</a>
+  <span class="retreived">20. März 2017</span>
+</p>
+
+<div class="chapter">
+
+  <h2 class="break nonr">Abstract</h2>
+
+  <p>
+    In der Geometrie ist "Space Partitioning" der Prozess der Unterteilung eines Raums in zwei oder mehrere disjunkte
+    Partitionen. Jeder Punkt im Raum kann einer Partition zugeordnet werden.
+  </p>
+
+  <p>
+    R-Tree, Kd Tree, Interval Tree, usw. sind Datenstrukturen welche in vielen grafischen Anwendungen oder GIS
+    Applikationen (Geographical Information System) verwendet werden und z.B. die Nachbarschafts- und Bereichsuche
+    erleichtern.
+  </p>
+
+  <p>
+    Im folgenden Dokument werden drei Bereiche des Space Partitioning vorgestellt. Unter Binäre Raumteilung wird
+    erläutert wie computerbasierte Zeichensystem eine 3D Welt zeichnen können. Die orthogonale Bereichsuche beschäftigt
+    sich mit Suchen in Räumen. Und bei Windowing handelt sich um die Einschränkung des Raumes auf ein Fenster.
+  </p>
+
+  <p>
+    Dieses Dokument basiert auf Wissen aus dem Buch <a href="#ref-computational-geometry">Computional Geometry -
+    Algorithms and Applications, 3rd Edition</a> geschrieben von Mark de Berg, Otfried Cheong, Marc van Kreveld und Mark
+    Overmars.
+  </p>
+
+</div>
+
+<p id="ref-computational-geometry" class="reference-item">
+  <span class="ref">Computational Geometry - Algorithms and Applications, 3rd Edition</span>
+  <span>Mark de Berg, Otfried Cheong, Marc van Kreveld, Mark Overmars</span>
+</p>
+
+<div class="chapter">
+  <h2 class="break nonr">Inhaltsverzeichnis</h2>
+  <ol id="toc"></ol>
+</div>
+
+
+<div class="chapter">
+  <h2 class="break">Einleitung</h2>
+
+  <p>
+    Raumunterteilung, oder in Englisch Space Partitioning, heisst in der Geometrie einen Raum in sich nicht
+    überschneidende Teilräume zu unterteilen. Jeder Punkt im Raum kann einem einzigen Teilraum zugeordnet werden.
+  </p>
+
+  <p>
+    Um einen Raum weiter und weiter zu unterteilen bietet sich eine Baumstruktur an. Ein Raum kann rekursiv in weitere
+    Teilräume unterteilt werden aus welchen sich die Nodes des Baums ergeben.
+  </p>
+
+  <p>
+    Die meisten Raumunterteilungssysteme benutzen Ebenen um den Raum zu unterteilen. In höher dimensionalen Räumen
+    kommen Hyperplanes zum Einsatz. In der Regel werden gewisse Punkte im Raum verwendet um die Eckpunkte der Ebenen zu
+    bestimmen und die Punkte dazwischen werden einer Ebene zugeordnet. Ein Beispiel eines rekursiv erstellten Baums, der
+    Ebenen benutzt, ist ein <a href="#bsp-tree">BSP Tree</a>.
+  </p>
+
+  <p>
+    Space Partitioning ist kein abgeschlossenes Gebiet welches klare Grenzen hat. Es hat vielseitige
+    Anwendungsmöglichkeiten und kann fast überall angetroffen werden. Deshalb habe ich drei wichtige Themengebiete und
+    die dazugehörigen Datenstrukturen herausgesucht und im folgenden Dokument erklärt. Die erwähnten Datenstrukturen
+    bilden die Basis für weitere spezifischere Konstrukte.
+  </p>
+</div>
+
+<div class="chapter">
+  <h2 class="break">Anwendungsbereiche</h2>
+
+  <h3>Computergrafik</h3>
+
+  <h4>Kollisionsdetektion</h4>
+  <p>
+    Raumunterteilung ist ein hilfreiches Werkzeug um in Computerspielen oder sonstigen Computersimulationen mit einer 2D
+    oder 3D Grafik Collision Detection zu realisieren. Um zu detektieren welche Einheiten gerade in der Nähe des
+    Hauptgebäudes sind kann man entweder naiv mit Brute Force durch die Liste aller Einheiten im Spiel iterieren oder
+    man verwendet einen raumunterteilenden Baum um die Einheiten schnell mit einer Komplexität von <span class="nobr">O(log N)</span>
+    zu finden.
+  </p>
+
+  <h4>Nearest Neighbor</h4>
+  <p>
+    Um eine gewisse Anzahl an nächstgelegenen Nachbaren zu finden wird ein k-nearest neighbor (k-NN) Algorithmus
+    verwendet. Ein k-NN Algorithmus klassifiziert Datenpunkte in einer Menge zu Gruppen.
+  </p>
+
+  <figure>
+    <img src="images/knn.png">
+    <figcaption>k nearest neighbor Suche</figcaption>
+    <span class="source">Quelle: <a href="#ref-wikipedia-knn">Wikipedia: k-nearest neighbor algorithm</a></span>
+  </figure>
+
+  <p>
+    Seit 1970 wurde die Branch and Bound Methode verwendet um das Problem zu lösen. Branch and Bound wird für
+    Natürliche-Zahlen-Optimierungsprobleme angewendet. Also für Probleme in welchen die Variablen natürliche Zahlen
+    sind. Häufig, aber nicht immer, sind die Variablen 1 oder 0. Ein Beispiel dafür wäre das Knapsack Problem auf
+    welches ich jetzt nicht weiter eingehe.
+  </p>
+
+  <p>
+    Mehrere raumunterteilende Methoden wurden entwickelt um die Nearest Neighbor Suche zu lösen, eine davon,
+    wahrscheinlich die einfachste, heisst <a href="#kd-tree">Kd Tree</a>. Der Kd Tree unterteilt den Suchraum iterativ
+    in zwei Unterräume die je die Hälfte der Punkte enthalten. Dieser ist jedoch nicht sehr geeignet, wenn sich der
+    Suchraum dynamisch verändert. Deshalb wurde der <a href="#r-tree">R-Tree</a> entwickelt, welcher effiziente
+    Algorithmen für das Einfügen und Löschen von Punkten hat.
+  </p>
+
+  <h4>Ray Tracing</h4>
+  <p>
+    In Ray Tracing Applikationen werden Strahlen durch jeden anzuzeigenden Pixel geschossen um zu berechnen welche Farbe
+    es hat. Das ist offensichtlich ohne weitere Optimierungen kaum in Echtzeit lösbar. Verbesserungen der Performance
+    können durch die Wahl von optimalen Kollisionsgeometrien, moderne Implementationen von Schnittpunktalgorithmen mit
+    Object Bounding und Volumen sowie durch parallele Berechnung gewonnen werden. Ein grosser Gewinn an Performance
+    erhält man durch die Benutzung einer raumunterteilenden Datenstruktur. Die einfachste Möglichkeit ist ein uniformes
+    Raster. Dies ist einfach zu implementieren und hat fast keinen Verwaltungsaufwand. Mit <a href="#kd-tree">Kd
+    Trees</a> oder Octrees kann aber noch mehr herausgeholt werden.
+  </p>
+
+  <h4>Portal Culling</h4>
+  <p>
+    In 3D Anwendungen gibt es häufig eine grosse Menge an Geometrien, die gezeichnet werden müssen, um die Szene
+    darzustellen. Damit nicht immer alles gezeichnet werden muss, kann Portal Culling zur Anwendung gebracht werden.
+    Simpel gesagt werden nur die Welt-Sektionen gezeichnet die durch ein Portal sichtbar sind. Das ist relativ einfach
+    vorstellbar bei Ur-Klassikern wie Doom oder Wolfenstein 3D. Nur was durch ein Portal sichtbar ist muss auch
+    gezeichnet werden. Um das zu berechnen werden raumunterteilende Datenstrukturen verwendet. Portal Culling wird auch
+    in den modernsten Game Engines angewendet wie z.B. der <a href="#ref-cryengine-portal-culling">CRYENGINE</a>.
+  </p>
+
+  <figure class="affix">
+    <img src="images/portal-culling.png">
+    <figcaption>Portal Culling, Vogelperspektive</figcaption>
+    <span class="source">Quelle: <a href="#ref-portal-culling">Panda3D: Portal Culling</a></span>
+  </figure>
+
+  <h3>Leiterplattenprüfung</h3>
+  <p>
+    Raumunterteilende Algorithmen und Datenstrukturen werden nicht ausschliesslich für Computeranwendungen gebraucht.
+    Auch Designer von Leiterplatten verwenden raumunterteilende Methoden um sicherzustellen, dass die entworfene Platte
+    auch herstellbar ist. Diese Überprüfung stellt fest ob unter Berücksichtigung der Leiterbreite und die nötigen
+    Abstände dazwischen eingehalten wurden. Ein modernes Design kann Milliarden von Polygonen haben die Kabel und
+    Transistoren repräsentieren.
+  </p>
+</div>
+
+<p id="ref-wikipedia-knn" class="reference-item">
+  <span class="ref">Wikipedia: k-nearest neighbors algorithm</span>
+  <a href="https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm" target="_blank">https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm</a>
+  <span class="retreived">12. Mai 2017</span>
+</p>
+
+<p id="ref-cryengine-portal-culling" class="reference-item">
+  <span class="ref">CRYENGINE: Culling Explained</span>
+  <a href="http://docs.cryengine.com/display/SDKDOC4/Culling+Explained" target="_blank">http://docs.cryengine.com/display/SDKDOC4/Culling+Explained</a>
+  <span class="retreived">6. Mai 2017</span>
+</p>
+
+<p id="ref-portal-culling" class="reference-item">
+  <span class="ref">Panda3D - Portal Culling</span>
+  <a href="https://www.panda3d.org/manual/index.php/Portal_Culling" target="_blank">https://www.panda3d.org/manual/index.php/Portal_Culling</a>
+  <span class="retreived">12. Mai 2017</span>
+</p>
+
+<div class="chapter">
+  <h2 class="break">Binäre Raumteilung</h2>
+
+  <h3>Painter's Algorithmus</h3>
+
+<p>
+  Heutzutage werden Piloten nicht mehr in einem echten Flugzeug ausgebildet. Die Ausbildung findet in Flugsimulatoren
+  auf dem Boden statt. Das spart kosten. Ein Flugsimulator ist eine 3D Anwendung mit Echtzeit-Rendering. Ein Pilot
+  muss auf dem Bildschirm ein realistisches Abbild der Realität sehen können wie er es in einem echten Flugzeug auch
+  antreffen wird. Dazu müssen Objekte wie Landebahn, Flughafengebäude oder Wolken auf den Bildschirm gezeichnet
+  werden. Damit die näheren Objekte vor den weiter entfernten Objekten gezeichnet werden, muss allerdings die
+  Reihenfolge berücksichtigt werden. Wir müssen nicht sichtbare Flächen verschwinden lassen. Man nennt dies in Englisch
+  Hidden Surface Removal.
+</p>
+
+<p>
+  Einer der ersten Algorithmen zur Lösung dieses Problems war Painter's Algorithmus. Er heisst so weil er ungefähr so
+  funktioniert wie ein Maler eine Zeichnung macht. Nebenbei gibt es auch den z-Buffer Algorithmus. Dieser ist der am
+  häufigsten verwendete Algorithmus zu Hidden Surface Removal. Er hat aber den Nachteil, dass er viel Speicher und einen
+  extra Test auf der Z-Koordinate benötigt.
+</p>
+
+<p>
+  Painter's Algorithmus sortiert die zu zeichnenden Objekte der Reihenfolge nach wie sie von der Kamera zu sehen
+  sind. Dann zeichnet er eine Fläche nach der anderen. Bereits gezeichnete Flächen die überdeckt werden müssen, werden
+  einfach überzeichnet. Dadurch müssen wir kaum Speicher zur Verfügung haben und sehr wenig testen solange wir die
+  Flächen sortiert haben. Painter's Algorithmus hat jedoch ein grosses Problem mit zyklisch überdeckenden Polygonen.
+</p>
+
+<figure>
+  <img src="images/painter.png">
+  <figcaption>Zyklisch überdeckende Polygone</figcaption>
+  <span class="source">Quelle: <a href="#ref-computational-geometry">Computational Geometry</a></span>
+</figure>
+
+<p>
+  Um solche Abbilder auf den Bildschirm zu bringen müssen wir den Algorithmus erweitern. Irgendeine der Flächen im
+  oberen Beispiel muss unterteilt werden in ein Dreieck und ein Viereck. Danach können wir die Flächen neu sortieren und
+  erfolgreich korrekt zeichnen. Dies kostet nun aber einiges an Rechenaufwand welchen wir gerne nicht mehrmals machen.
+  Dazu können wir das in einer passenden Datenstruktur abspeichern. Das ist der binäre raumunterteilende Baum oder auch
+  BSP Tree genannt.
+</p>
+
+  <h3><a name="bsp-tree">BSP Tree</a></h3>
+<p>
+  Eine raumunterteilende Grafik mit Polygonen und dem dazugehörigen BSP Tree ist unten dargestellt. Um den Raum zu
+  unterteilen schneiden wir die Ebene zuerst mit &ell;<sub>1</sub>, daraus ergeben sich zwei neue Halbebenen. Die
+  Halbebene über &ell;<sub>1</sub> schneiden wir mit &ell;<sub>2</sub> und die Halbebene unter &ell;<sub>1</sub> mit
+  &ell;<sub>3</sub> und so weiter. Die Schnitte unterteilen nicht nur die Ebene, sie können auch die Objekte darin in
+  Fragmente unterteilen. Dieser Vorgang wird solange weitergeführt bis in jeder Region nur noch ein Fragment vorhanden
+  ist.
+</p>
+
+<figure>
+  <img src="images/bsp-tree.png">
+  <figcaption>Teilebenen und der dazugehörige BSP Tree</figcaption>
+  <span class="source">Quelle: <a href="#ref-computational-geometry">Computational Geometry</a></span>
+</figure>
+
+<p>
+  Diese Unterteilung wird als Binärbaum modelliert. Jedes Blatt vom Baum korrespondiert zu einem Fragment der finalen
+  Unterteilung. Jeder interne Knoten des Baums korrespondiert zu einer Schneidegeraden.
+</p>
+
+<p>
+  Den erzeugten Baum können wir nun verwenden um Painter's Algorithmus korrekt umzusetzen. Die Effizienz des
+  Algorithmus ist aber stark abhängig von der Grösse des BSP Trees. Je kleiner, desto effizienter. Also müssen wir einen
+  geeigneten Schneidealgorithmus finden, der möglichst wenig Polygone durchschneidet und so einen kleinen Baum erzeugt.
+  Um den Schneidealgorithmus zu unterstützen können wir im Szenenaufbau einige Tricks anwenden die den Baum kleiner
+  lassen werden. So können zum Beispiel keine gekurvten Objekte verwendet werden, sondern Polyeder die in Dreiecke
+  aufteilbar sind.
+</p>
+
+<h3>Konstruktion</h3>
+<p>
+  Der Algorithmus zur Konstruktion eines BSP Trees ist einfach und ist auf <a href="#ref-faqs-bsp-tree">faqs.org</a>
+  sehr gut beschrieben:
+</p>
+
+<ol>
+  <li>Eine Ebene auswählen</li>
+  <li>Unterteile die Menge an Polygonen in der Ebene</li>
+  <li>Fahre rekursiv mit beiden Halbebenen fort</li>
+</ol>
+
+<h4>Wahl der Teilebene</h4>
+<p>
+  Die Wahl der Teilebene ist abhängig vom Anwendungsfall und welche Effizienzkriterien wir für die Konstruktion haben.
+  Für einige Anwendungen kann es sinnvoll sein die Teilebene von der Liste der Polygone abzuleiten, für andere macht es
+  mehr Sinn, wenn die Teilebene senkrecht an den Achsen ausgerichtet ist.
+</p>
+
+<p>
+  Ein gutes Ziel ist ein balancierter Baum. Balanciert ist ein Baum, wenn jedes Blatt ungefähr dieselbe Menge an
+  Polygonen hat. Das ist aber nur mit hohem Rechenaufwand erreichbar. Eine schlechte Wahl der Teilebene kann viele
+  Teilfragmente zur Folge haben und dadurch viele Polygone an den Blättern erzeugen. Normalerweise macht man ein Trade
+  Off zwischen Balance und Anzahl Teilungen.
+</p>
+
+<h4>Teilfragmente</h4>
+<p>
+  Die Unterteilung von Polygonen in Fragmente ist die Klassifikation jedes Polygon-Objektes der Menge in Abhängigkeit
+  der Teilebene. Ist ein Polygon zur einen oder anderen Seite der Trennlinie, wird es nicht modifiziert und wird zur
+  Teilmenge der Seite zu der es gehört zugeordnet. Überschneiden sich Trennlinie und Polygon wird es in zwei oder mehr
+  Fragmente zerteilt. Die resultierenden Fragmente werden den beiden Seiten zugeordnet.
+</p>
+
+<h4>Stoppbedingung</h4>
+<p>
+  Wann genau aufgehört wird den Baum zu berechnen ist wiederum anwendungsbedingt. Ein mögliches Kriterium kann eine
+  maximale Fragment Anzahl bei einem Blatt sein. Ein idealer BSP Baum hätte das Maximum von 1. Oder man fährt solange
+  fort bis jedes Polygon in einem internen Blatt vorhanden ist. Oder man limitiert die Baumtiefe.
+</p>
+
+<h4>Pseudo Code Konstruktion BSP Tree:</h4>
+<p>
+  Die folgenden Code Listings zeigen die Struktur der BspTree Klasse und der Algorithmus zur Konstruktion des Baumes.
+</p>
+
+<figure class="affix">
+<pre><code>class BspTree {
+  Plane partition;
+  List&lt;Polygon&gt; polygons = new ArrayList&lt;&gt;();
+  BspTree front;
+  BspTree back;
+}
+</code></pre>
+  <figcaption>Struktur BSP Tree</figcaption>
+</figure>
+
+<figure class="affix">
+<pre><code>void buildBspTree(BspTree tree, List&lt;Polygon&gt; polygons) {
+  Polygon root = polygons.get(0);
+
+  tree.setPartition(root.getPlane());
+  tree.getPolygons().add(root);
+
+  List&lt;Polygon&gt; frontlist = new ArrayList&lt;&gt;();
+  List&lt;Polygon&gt; backlist = new ArrayList&lt;&gt;();
+
+  polygons.forEach(polygon -> {
+    PositionClassification result = tree.getPartition().classify(polygon);
+
+    switch(result) {
+      case COINCIDENT:
+        tree.getPolygons().add(polygon);
+        break;
+      case IN_BACK_OF:
+        backlist.add(polygon);
+        break;
+      case IN_FRONT_OF:
+        frontlist.add(polygon);
+        break;
+      case SPANNING:
+        Pair&lt;Polygon, Polygon&gt; split = splitPolygon(polygon, tree.getPartition());
+        backlist.add(split.getLeft());
+        frontlist.add(split.getRight());
+        break;
+    }
+  });
+
+  if(!frontlist.isEmpty()) {
+    tree.setFront(new BspTree());
+    buildBspTree(tree.getFront(), frontlist);
+  }
+
+  if(!backlist.isEmpty()) {
+    tree.setBack(new BspTree());
+    buildBspTree(tree.getBack(), backlist);
+  }
+}
+</code></pre>
+  <figcaption>Algorithmus: Konstruktion BSP Tree</figcaption>
+</figure>
+
+<p>
+  Diese Implementation nimmt an, dass alle Polygone konvex sind. Konvex heisst, von jedem Punkt des Polygons kann ohne
+  Verlassen des Polygons ein beliebiger anderer Punkt erreicht werden. Auch kann die Implementation verbessert werden in
+  dem die Teilebene (Partition) intelligenter ausgewählt wird.
+</p>
+
+<h3>Suche</h3>
+<p>
+  Der Algorithmus um eine Szene zu zeichnen vom Standpunkt <code>v</code> sieht so aus:
+</p>
+
+<figure>
+<pre><code>View v = ...;
+
+void render(BspTree tree) {
+  if(tree.getFront() == null && tree.getBack() == null) {
+    // the current node is a leaf
+    renderPolygons(tree.getPolygons());
+    return;
+  }
+
+  PositionClassification result = tree.getPartition().classify(v);
+
+  switch(result) {
+    case IN_BACK_OF:
+      renderPolygons(tree.getFront().getPolygons());
+      renderPolygons(tree.getPolygons());
+      renderPolygons(tree.getBack().getPolygons());
+      break;
+    case IN_FRONT_OF:
+      renderPolygons(tree.getBack().getPolygons());
+      renderPolygons(tree.getPolygons());
+      renderPolygons(tree.getFront().getPolygons());
+      break;
+    case COINCIDENT:
+      renderPolygons(tree.getFront().getPolygons());
+      renderPolygons(tree.getBack().getPolygons());
+      break;
+}
+</code></pre>
+  <figcaption>Algorithmus: Render Szene mit BSP Tree</figcaption>
+</figure>
+
+<h3>Dynamik</h3>
+<p>
+  Ein BSP Baum zu berechnen kostet viel CPU Zeit. Deshalb will man das nicht für jedes Frame machen. BSP Trees verwendet
+  man in der Regel nur für statische Geometrien. Eine der ersten Anwendung in der BSP Trees angewendet wurde war das
+  Spiel <a href="#ref-doom-bsp-tree">Doom</a>. Darin wird der BSP Baum beim Laden des Levels berechnet was einige Zeit
+  dauern kann, wenn es ein grosses Level ist. Dynamische Objekte werden dann in Kombination eines Z-Buffers gezeichnet.
+</p>
+
+<h3>Komplexität</h3>
+<p>
+  Fazit ist, Einfügen und Löschen von Objekten in einem BSP Tree haben die selbe Zeitkomplexität wie die Neuberechnung
+  des Baumes von O(n<sup>3</sup>). Das macht den BSP Baum ungeeignet für dynamische Szenen.
+</p>
+
+<p id="ref-faqs-bsp-tree" class="reference-item">
+  <span class="ref">faqs.org: Erklärung der BSP Tree Konstruktion</span>
+  <a href="http://www.faqs.org/faqs/graphics/bsptree-faq"
+     target="_blank">http://www.faqs.org/faqs/graphics/bsptree-faq</a>
+  <span class="retreived">7. Mai 2017</span>
+</p>
+
+<p id="ref-doom-bsp-tree" class="reference-item">
+  <span class="ref">Doom Engine verwendet BSP Trees</span>
+  <a href="https://en.wikipedia.org/wiki/Doom_engine#Binary_space_partitioning" target="_blank">https://en.wikipedia.org/wiki/Doom_engine</a>
+  <span class="retreived">7. Mai 2017</span>
+</p>
+
+</div>
+
+<div class="chapter">
+  <h2 class="break">Orthogonale Bereichsuche</h2>
+
+  <p>
+    Wenn man über Datenbanken denkt, ist meist nicht das erste was aufkommt Geometrie. Jedoch kann man die Abfrage einer
+    Datenbank gut mit einem Geometrie Problem vergleichen. Wir nehmen an wir haben eine Tabelle Employee mit folgendem
+    Schema:
+  </p>
+
+  <figure>
+    <table>
+      <thead>
+      <tr>
+        <th colspan="4">Employee</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>Name</td>
+        <td>Birthday</td>
+        <td>Salary</td>
+        <td>Kids</td>
+      </tr>
+      </tbody>
+    </table>
+    <figcaption>Employee Beispiel</figcaption>
+  </figure>
+
+  <p>
+    Nun wollen wir alle Employees mit einem Salär zwischen 3'000 CHF und 4'000 CHF abfragen. Das heisst wir müssen in
+    einem eindimensionalem Raum alle Werte zwischen zwei Variablen finden. Das ist ein bekanntes Problem und kann mit
+    einem balancierten Binärsuchbaum effizient gelöst werden. Doch was passiert, wenn wir unsere Abfrage weiter
+    einschränken. Wir wollen zudem nur die Employees die zwischen 1950 und 1955 geboren wurden. Dann wird daraus ein
+    Planarproblem.
+  </p>
+
+  <figure>
+    <img src="images/database-search.png">
+    <figcaption>2D Bereichsuche in einer Datenbank</figcaption>
+    <span class="source">Quelle: <a href="#ref-computational-geometry">Computational Geometry</a></span>
+  </figure>
+
+  <p>
+    Fügen wir nun noch eine weitere Anforderung dazu, dass nur Employees mit 2 bis 4 Kindern gefunden werden sollen, können
+    wir das Problem in 3D beschreiben.
+  </p>
+
+  <figure class="affix">
+    <img src="images/database-search-3d.png">
+    <figcaption>3D Bereichsuche in einer Datenbank</figcaption>
+    <span class="source">Quelle: <a href="#ref-computational-geometry">Computational Geometry</a></span>
+  </figure>
+
+  <p>
+    Das heisst, jede weitere Bedingung erzeugt eine weitere Dimension in der Abfrage. Wir nennen dieses Prinzip
+    orthogonale Bereichsuche.
+  </p>
+
+  <h3><a name="kd-tree">Kd Tree</a></h3>
+
+<p>
+  Wie erwähnt kann die eindimensionale Bereichsuche mit einem balancierten Binärbaum gelöst werden. Beschäftigen wir uns
+  nun mit 2 Dimensionen. Man könnte sagen die Bereichssuche in 2D kann aufgeteilt werden in zwei Bereichssuchen in 1D,
+  eine für die x-Koordinate und eine für die y-Koordinate. Wie bringen wir nun zwei Bäume zu einem?
+</p>
+
+<p class="affix">
+  Das ist möglich in dem wir abwechselnd an der x-Koordinate und y-Koordinate aufteilen. Bei der Baumwurzel teilen wir
+  an der x-Koordinate, auf der 2. Stufe an der y-Koordinate, auf der 3. Stufe wieder an der x-Koordinate und so weiter.
+</p>
+
+<figure class="affix">
+  <img src="images/kd-tree-space.png">
+  <figcaption>Mit Kd Tree aufgeteilter Raum</figcaption>
+</figure>
+<figure class="full affix">
+  <img src="images/kd-tree.png">
+  <figcaption>Kd Tree</figcaption>
+</figure>
+
+<p>
+  Ein solches Konstrukt nennt man ein Kd Tree. Das ist ein k-dimensionaler Baum der eine spezielle Ausprägung des BSP
+  Trees ist. Ursprünglich hiess es 2d Tree. Doch heute ist im Sprachgebrauch ein zweidimensionaler Kd Tree gebräuchlich.
+</p>
+
+<h4>Konstruktion</h4>
+<p>
+  Die Konstruktion des Kd Tree wird anhand des folgenden Algorithmus zu erklärt.
+</p>
+
+<figure class="affix">
+<pre><code>class Node {
+  Split split;
+  Point point;
+  Node above;
+  Node below;
+}
+
+class Split {
+  boolean even;
+  float coordinate;
+}
+</code></pre>
+  <figcaption>Struktur einer Node eines Kd Tree</figcaption>
+</figure>
+
+<figure class="affix">
+<pre><code>Node buildKdTree(List&lt;Point&gt; points, int depth) {
+  if(points.size() == 0) {
+    return null;
+  }
+
+  if(points.size() == 1) {
+    return new Node(points.get(0));
+  }
+
+  boolean even = depth % 2 == 0;
+  {split, pointsAbove, pointsBelow} = split(points, even);
+
+  Node nodeAbove = buildKdTree(pointsAbove, depth + 1);
+  Node nodeBelow = buildKdTree(pointsBelow, depth + 1);
+
+  return new Node(split, nodeAbove, noveBelow);
+}
+</code></pre>
+  <figcaption>Algorithmus: Konstruktion Kd Tree</figcaption>
+</figure>
+
+<p>
+  Wie man erkennt ist es ein rekursiver Algorithmus der mit allen Punkten startet und die Punktewolke weiter und weiter
+  in Regionen unterteilt. Der so konstruierte Baum ist automatisch ausbalanciert. Dies weil die <code>split</code>-Methode
+  die Punkte am Median unterteilt. Jedoch wird aus Performancegründen nicht der wahre Median berechnet. Ist die Menge
+  der Punkte ungerade, ist die Berechnung trivial, man nimmt den mittleren Punkt auf der x- respektive y-Achse. Ist die
+  Menge der Punkte gerade nimmt man entweder den Punkt aus der unteren oder oberen Mitte.
+</p>
+
+<h4>Punkte hinzufügen</h4>
+<p>
+  Wie beim BSP Tree besprochen muss die Berechnung des Kd Tree nicht alle Punkte aufteilen. Sondern man fährt so lange
+  fort wie es Sinn macht. Restliche Punkte kann man den bestehenden Nodes als Liste anhängen. Dazu müsste im obigen
+  Pseudo Code die Node Klasse so geschrieben sein, dass sie eine Liste von Punkten enthalten kann. Um also einen Punkt
+  hinzuzufügen traversiert man den Baum und hängt bei der letzten angetroffenen Node den Punkt an. Alternativ kann man
+  den Kd Tree auch weiterführen.
+</p>
+
+<p>
+  Werden Punkte dynamisch hinzugefügt und der Kd Tree weitergeführt, ist es wahrscheinlich, dass der Baum nicht mehr
+  balanciert ist und keine guten Suchzeiten mehr garantieren kann. Ein Neubalancieren des Kd Trees ist nicht einfach,
+  weil die Rotationsmethode nicht angewendet werden kann, weil es beim Kd Tree sich um ein mehrdimensionalen Baum
+  handelt. Es gibt aber Methoden wie man es bewerkstelligen könnte.
+</p>
+
+<h4>Punkte entfernen</h4>
+<p>
+  Es gibt mehrere Varianten wie Punkte entfernt werden können. Die naivste wäre wohl die Punkte einfach aus den Nodes
+  zu entfernen aber die Nodes so zu lassen wie sie sind. Bleibt die räumliche Verteilung der Punkte in etwa gleich,
+  könnte dass eine schnelle Möglichkeit sein. Anderseits kann man auch den Teilbaum neuberechnen der unter der Node mit
+  dem Punkt ist. Wenn aber ein Punkt entfernt ist der weit oben im Baum ist, muss jeweils viel neuberechnet werden. Eine
+  weitere Möglichkeit ist, für den gelöschten Punkt einen Ersatz in der Nähe zu finden. Das verschiebt den Teilbaum ein
+  wenig und Teile müssen neu berechnet werden, jedoch nicht der ganze.
+</p>
+
+  <h3>Bins</h3>
+<p>
+  Bins (Englisch für Eimer) sind eine weitere Möglichkeit Objekte in einem Raum abzufragen. Eine Bin-Datenstruktur
+  unterteilt den Raum in achsenausgerichtete Eimer. Jeder Eimer ist gleich gross.
+</p>
+
+<figure class="affix">
+  <img src="images/bin.png">
+  <figcaption>Bin (Quelle: Wikipedia)</figcaption>
+  <span class="source">Quelle: <a href="#ref-wikipedia-bins">Wikipedia: Bins</a></span>
+</figure>
+
+<p class="affix">
+  Zu jedem Bin wird gibt es eine Liste welche Objekte sich darin befinden. Ein Objekt kann in mehreren Bins vorkommen.
+  Ich kann also zum Beispiel abfragen was sich mit der Region <code>Q</code> schneidet. Diese Abfrage würde im obigen
+  Beispiel <code>C</code>, <code>D</code>, <code>E</code> und <code>F</code> zurückgeben. Dies sind nur Kandidaten.
+  Um herauszufinden welche Objekte meine Region <code>Q</code> wirklich schneiden muss ich für jedes Objekt einen Test
+  durchführen. Hätte ich keine Bins müsste ich sämtliche Objekte durchtesten. Von der Region <code>Q</code> auf die sich
+  schneidenden Bins zu kommen, ist mit einfachen Bit Operationen möglich.
+</p>
+
+<p id="ref-wikipedia-bins" class="reference-item">
+  <span class="ref">Wikipedia: Bins</span>
+  <a href="https://en.wikipedia.org/wiki/Bin_(computational_geometry)" target="_blank">https://en.wikipedia.org/wiki/Bin_(computational_geometry)</a>
+  <span class="retreived">12. Mai 2017</span>
+</p>
+
+</div>
+
+<div class="chapter">
+  <h2 class="break">Windowing</h2>
+
+  <p>
+    Heutzutage haben fast alle Personenwagen ein eingebautes Navigationsgerät. Das Navi zeigt dem Fahrer wo er
+    durchfahren muss indem es ihm einen Kartenausschnitt präsentiert. Der Kartenausschnitt ist Teil einer grösseren
+    Karte die ein Land oder sogar einen ganzen Kontinent oder manchmal sogar die ganze Erde enthält. Das Navi muss
+    dann entscheiden welche Objekte es jetzt gerade in diesem Kartenausschnitt darstellen muss. Der Brute Force Ansatz
+    funktioniert nicht, weil dazu Millionen von Objekten geprüft werden müssen, ob diese im Kartenausschnitt sichtbar
+    sind. Was das Navi macht nennt man ein Windowing Query. Es fragt eine Datenstruktur mit einer Boundary ab und erhält
+    die darin enthaltenen Objekte. Windowing Queries sind ähnlich wie orthogonale Bereichssuche, sind aber meist
+    limitiert auf 2 oder 3 Dimensionen.
+  </p>
+
+  <h3>Interval Tree</h3>
+<p>
+  Um nicht gleich mit 2 oder 3 Dimensionen zu beginnen beschäftigen wir uns zuerst mit einer Dimension. Wir stellen uns
+  vor wir haben ein Zeitstrahl. Auf diesem Zeitstrahl befinden sich verschiedene Intervalle. Als Beispiel können wir die
+  Prüfungen nehmen. Es finden Prüfungen unterschiedlicher Länge zu unterschiedlichen Zeitpunkten statt. Einige Prüfungen
+  überschneiden sich zeitlich.
+</p>
+
+<figure>
+  <img src="images/intervals.png">
+  <figcaption>Intervalle auf Zeitstrahl</figcaption>
+</figure>
+
+<p>
+  Würden sich die Intervalle nicht überlappen, könnten wir den einfachen Weg gehen und die Intervalle einfach in einen
+  Binärbaum packen und schon könnten wir sie mit <span class="nobr">O(log n)</span> Zeit abfragen. Nur sind sie halt
+  überlappend. In einer ersten Überlegung könnte man auf die Idee kommen einfach zwei Bäume zu bauen für die Start- und
+  Endzeit. Beide Bäume können in <span class="nobr">O(log n)</span> Zeit abgefragt werden. Weil sie aber wieder mit O(n)
+  Zeit zusammengeführt werden müssen, enden wir mit einer Abfragezeit von <span class="nobr">O(n + log n) = O(n)</span>
+  was nicht besser ist als der Brute Force Ansatz.
+</p>
+
+<h4>Konstruktion</h4>
+<p>
+  Ein Interval Tree kann rekursiv konstruiert werden. In einem Schritt werden als Eingabeparameter die Menge der
+  Intervalle übergeben. Der Algorithmus separiert diese in drei Kategorien. Eine Kategorie sind die Intervalle, die sich
+  links vom Median befinden, eine andere die Intervalle rechts des Median. Und dann gibt es noch die Intervalle die den
+  Median schneiden. Die schneidenden Intervalle werden in einer speziellen Datenstruktur abgelegt. Diese Datenstruktur
+  enthält zwei sortierte Mengen der Intervalle. Es wird einmal nach Start- und einmal nach Enddatum sortiert. Diese
+  Struktur wird der aktuellen Node angehängt. Mit den Intervallen links und rechts wird der Baum nun weitergebaut.
+</p>
+
+<figure>
+<pre><code>class Interval {
+  int start;
+  int end;
+}
+
+class Node {
+  int value;
+  SortedIntervals mid;
+  Node left;
+  Node right;
+}
+
+class SortedIntervals {
+  SortedSet&lt;Interval&gt; startpoints;
+  SortedSet&lt;Interval&gt; endpoints;
+}
+</code></pre>
+  <figcaption>Struktur Interval Tree Node</figcaption>
+</figure>
+<figure>
+<pre><code>Node buildIntervalTree(Set&lt;Interval&gt; intervals) {
+  Node node = new Node();
+
+  if(intervals.isEmpty()) {
+    return node;
+  }
+
+  int endMedian = calcEndpointMedian(intervals);
+  {leftIntervals, midIntervals, rightIntervals} = classify(intervals, endMedian);
+
+  node.value = endMedian;
+  node.mid = midIntervals;
+  node.left = buildIntervalTree(leftIntervals);
+  node.right = buildIntervalTree(rightIntervals);
+
+  return node;
+}
+</code></pre>
+  <figcaption>Algorithmus: Konstruktion Interval Tree</figcaption>
+</figure>
+
+<h4>Intervall einfügen und entfernen</h4>
+<p>
+  Das Einfügen und Entfernen von Intervallen in Interval Trees funktioniert ähnlich mit Rotation wie bei einem normalen
+  balancierten Binärbaum. Nach der Änderung im Baum müssen jedoch die Intervalle neu gesucht werden die die nach oben
+  geschobene Node überlappen. Diese müssen dann dahin geschoben werden. Als Konsequenz kann es sein, dass es eine neue
+  leere Node gibt. Diese kann mit dem selben Algorithmus gelöscht werden.
+</p>
+
+<figure>
+  <img src="images/interval-tree-deletion.png">
+  <figcaption>Node aus Interval Tree entfernen</figcaption>
+  <span class="source">Quelle: <a href="#ref-wikipedia-interval-tree">Wikipedia: Interval Tree</a></span>
+</figure>
+
+<p>
+  Einfügen und Entfernen brauchen <span class="nobr">O(log n)</span> Zeit, wobei n die Anzahl Intervalle vor der
+  Operation ist.
+</p>
+
+<p id="ref-wikipedia-interval-tree" class="reference-item">
+  <span class="ref">Wikipedia: Interval Tree</span>
+  <a href="https://en.wikipedia.org/wiki/Interval_tree" target="_blank">https://en.wikipedia.org/wiki/Interval_tree</a>
+  <span class="retreived">12. Mai 2017</span>
+</p>
+
+  <h3><a name="r-tree">R-Tree</a></h3>
+<p>
+  Kommen wir nun zu zwei Dimensionen beziehungsweise zurück zu unserem Navi Problem. Der R-Tree löst das Windowing
+  effizient. Nicht nur die CPU wird geschont, auch ist der R-Tree so aufgebaut, dass Teilbäume in Pages gespeichert
+  werden, die auf einer Festplatte abgelegt werden und schnell wieder gelesen werden können. Nämlich genau das ist beim
+  Navi Beispiel ungemein wichtig, weil die ganze Erde nicht im Speicher gehalten werden kann. Nicht einmal ein Baum
+  davon. Der R-Tree hat sein R von Rectangle. Die Nodes in einem R-Tree, der übrigens vom B-Tree abgeleitet ist, sind
+  Rechtecke. Und wie vom B-Tree bekannt, können Nodes mehr als zwei Children haben.
+</p>
+
+<figure class="affix">
+  <img src="images/r-tree.png">
+  <figcaption>R-Tree</figcaption>
+  <span class="source">Quelle: <a href="#ref-wikipedia-r-tree">Wikipedia: R-Tree</a></span>
+</figure>
+
+<h4>Einfügen</h4>
+<p>
+  Die Idee ist dass ein Node-Rechteck sämtliche Children Node-Rechtecke umschliesst. Um ein Punkt, Rechteck bzw. ein MBR
+  (minimum bounding rectangle) einzufügen, geht man wie folgt vor.
+</p>
+<p>
+  Der Baum wird rekursiv, startend beim Root Node, traversiert. An jeder Node werden sämtliche Child-Nodes analysiert
+  und mit einer Heuristik bewertet welche am besten passt. Diese Heuristik bewertet zum Beispiel um wie viel die
+  Child-Node vergrössert werden müsste und wählt den geringsten Vergrösserungsfaktor. Die Suche geht solange weiter bis
+  eine bestehende Blatt-Node erreicht wird. Dort kann eingefügt werden. Ist jedoch die Blatt-Node bereits voll (anhand
+  der gewählten Einschränkungen), muss diese Node aufgeteilt werden. Dies muss wieder mit einer Heuristik geschehen, da
+  ein erschöpfender Algorithmus zu langsam wäre. Die neue Node wird der darüber liegenden Node angehängt. Ist diese
+  jedoch auch schon voll propagiert es weiter nach oben bis zum Root-Node. Passiert das, wird eine neue Root-Node
+  erstellt.
+</p>
+
+<p id="ref-wikipedia-r-tree" class="reference-item">
+  <span class="ref">Wikipedia: R-Tree</span>
+  <a href="https://en.wikipedia.org/wiki/R-tree" target="_blank">https://en.wikipedia.org/wiki/R-tree</a>
+  <span class="retreived">12. Mai 2017</span>
+</p>
+
+</div>
+
+
+<h2 class="break">Appendix</h2>
+<div class="chapter">
+  <h3>Quellenverzeichnis</h3>
+
+<div id="references"></div>
+
+  <h3 class="break">Abbildungsverzeichnis</h3>
+
+<ul id="figures"></ul>
+
+  <h3>Software</h3>
+
+<p>
+  Um die Resultate dieser Arbeit zu erzeugen wurde folgende Software eingesetzt:
+</p>
+
+<ul>
+  <li>Git 2.8</li>
+  <li>PrinceXML 11.1</li>
+  <li>IntelliJ IDEA 2017</li>
+  <li>nodeJS 6.9.1</li>
+  <li>reveal.js</li>
+</ul>
+
+  <h3>Glossar</h3>
+
+<dl>
+  <dt>Bins</dt> <dd>Datenstruktur zur effizienten Bereichsuche</dd>
+  <dt>BSP Tree</dt> <dd>Binary Space Partitioning Tree</dd>
+  <dt>GIS</dt> <dd>Geographical Information System</dd>
+  <dt>k-NN</dt> <dd>k nearest neighbor</dd>
+  <dt>Kd Tree</dt> <dd>k-dimensionaler Tree</dd>
+  <dt>MBR</dt> <dd>minimum bounding rectangle</dd>
+  <dt>Octree</dt> <dd>Tree wobei jede Node 8 Children hat</dd>
+  <dt>R-Tree</dt> <dd>Indexierung von z.B. geographischen Koordinaten</dd>
+  <dt>Z-Buffer</dt> <dd>Tiefen Buffer zur Sortierung von Objekten</dd>
+</dl>
+
+</div>
+
+
+
+</body>
+</html>

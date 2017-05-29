@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <title>Space Partitioning</title>
+
+  <meta name="description" content="Slides about space partitioning data structures">
+  <meta name="author" content="Sebastian Häni">
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="css/reveal.css">
+  <link rel="stylesheet" href="css/theme/black.css" id="theme">
+  <link rel="stylesheet" href="main.css">
+
+  <!-- Theme used for syntax highlighting of code -->
+  <link rel="stylesheet" href="lib/css/zenburn.css">
+
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+    document.getElementsByTagName('head')[0].appendChild(link);
+  </script>
+  <script src="lib/js/head.min.js"></script>
+  <script src="js/reveal.js"></script>
+</head>
+<body>
+
+<div class="reveal">
+  <div class="slides">
+    <section style="text-align: left">
+  <h1>Space Partitioning</h1>
+  <h4>Raumunterteilende Datenstrukturen</h4>
+
+  <p>
+    <small>by Sebastian Häni</small>
+  </p>
+</section>
+
+
+<section data-background-video="images/maps.mp4">
+</section>
+
+<section>
+  <h3>k nearest neighbor</h3>
+  <img src="images/knn.png" width="60%">
+  <small class="source">Source: CPVR2.ch11.1.Classification, Marcus Hudritsch</small>
+</section>
+
+<section>
+  <h3>Portal Culling</h3>
+  <img src="images/portal-culling.png" width="60%">
+  <small class="source">Source: http://panda3d.org/manual/index.php/Portal_Culling</small>
+</section>
+
+<section>
+  <h3>Geometry Culling</h3>
+  <div style="position:relative;height:0;padding-bottom:56.25%">
+    <iframe src="https://www.youtube.com/embed/eormcv4aZkg?controls=0&showinfo=0&modestbranding=1" width="640" height="360" frameborder="0"
+            style="position:absolute;width:100%;height:100%;left:0"></iframe>
+  </div>
+  <small class="source">Source: https://www.youtube.com/watch?v=eormcv4aZkg</small>
+</section>
+
+<section>
+  <h3>Collision detection</h3>
+  <video id="sniper-elite" src="images/sniper-elite.mp4" autoplay></video>
+  <script>
+    const video = document.querySelector('#sniper-elite');
+    video.addEventListener("timeupdate", () => {
+      if (video.currentTime >= 11) {
+        video.currentTime = 0;
+        video.play();
+      }
+    });
+  </script>
+  <small class="source">Source: https://www.reddit.com/r/gaming/comments/50g1wa/bullseye_sniper_elite_3</small>
+</section>
+
+<section>
+  <h2>Ziel</h2>
+
+  <p class="fragment">bessere Performance</p>
+</section>
+
+<section style="text-align: left">
+  <p class="fragment highlight-blue">Binary Space Partitioning</p>
+  <p>Orthogonale Bereichsuche</p>
+  <p>Windowing</p>
+</section>
+
+<section>
+  <h2>Binary Space Partitioning</h2>
+</section>
+
+<section>
+  <h3>Painter's Algorithm</h3>
+</section>
+
+<section>
+  <img src="images/painter-scene.png">
+</section>
+
+<section>
+  <ol>
+    <li>sortiere alle Objekte an der z-Koordinate</li>
+    <li>zeichne Objekte der Reihenfolge nach</li>
+  </ol>
+</section>
+
+<section>
+  <video src="images/painters.mp4" controls></video>
+</section>
+
+<section>
+  <ol>
+    <li>sortiere alle Objekte an der z-Koordinate</li>
+    <li class="fragment">erkenne Überschneidungen
+      <ul style="list-style-type: none">
+        <li class="fragment">2.1 unterteile ein Objekt in zwei Flächen</li>
+        <li class="fragment">2.1 gehe zu 1.</li>
+      </ul>
+    </li>
+    <li>zeichne Objekte der Reihenfolge nach</li>
+  </ol>
+</section>
+
+<section>
+  <img src="images/bsp-tree-cut.png">
+</section>
+
+<section>
+  <h3>BSP Tree</h3>
+</section>
+
+<section>
+  <h4>Konstruktion</h4>
+  <ol>
+    <li>Eine Ebene auswählen</li>
+    <li>Unterteile die Menge an Polygonen in der Ebene</li>
+    <li>Fahre rekursiv mit beiden Halbebenen fort</li>
+  </ol>
+</section>
+
+<section>
+  <svg width="600px" height="600px">
+    <polygon points="200,50 250,190 160,150" style="fill:#ddd;stroke:#333;stroke-width:1"></polygon>
+    <polygon points="260,80 280,190 350,210" style="fill:#ddd;stroke:#333;stroke-width:1"></polygon>
+    <polygon points="550,450 450,400 425,300 500,350" style="fill:#ddd;stroke:#333;stroke-width:1"></polygon>
+    <polygon points="100,450 180,300 165,500 80,550" style="fill:#ddd;stroke:#333;stroke-width:1"></polygon>
+    <polygon points="200,250 250,300 350,500 300,450 200,550" style="fill:#ddd;stroke:#333;stroke-width:1"></polygon>
+
+    <line class="fragment" x1="0" y1="230" x2="600" y2="230" style="stroke: rgb(255,0,0); stroke-width: 2"></line>
+    <line class="fragment" x1="230" y1="230" x2="600" y2="600" style="stroke: rgb(255,0,0); stroke-width: 2"></line>
+    <line class="fragment" x1="240" y1="0" x2="265" y2="230" style="stroke: rgb(255,0,0); stroke-width: 2"></line>
+    <line class="fragment" x1="400" y1="400" x2="0" y2="520" style="stroke: rgb(255,0,0); stroke-width: 2"></line>
+    <line class="fragment" x1="190" y1="462" x2="185" y2="230" style="stroke: rgb(255,0,0); stroke-width: 2"></line>
+    <line class="fragment" x1="190" y1="462" x2="185" y2="600" style="stroke: rgb(255,0,0); stroke-width: 2"></line>
+  </svg>
+</section>
+
+<section>
+  <svg width="600px" height="600px">
+    <polygon points="200,50 250,190 160,150" style="fill:#ddd;stroke:#333;stroke-width:1"></polygon>
+    <polygon points="260,80 280,190 350,210" style="fill:#ddd;stroke:#333;stroke-width:1"></polygon>
+    <polygon points="550,450 450,400 425,300 500,350" style="fill:#ddd;stroke:#333;stroke-width:1"></polygon>
+    <polygon points="100,450 180,300 165,500 80,550" style="fill:#ddd;stroke:#333;stroke-width:1"></polygon>
+    <polygon points="200,250 250,300 350,500 300,450 200,550" style="fill:#ddd;stroke:#333;stroke-width:1"></polygon>
+
+    <line class="fragment" x1="0" y1="230" x2="600" y2="230" style="stroke: rgb(255,0,0); stroke-width: 2"></line>
+    <line class="fragment" x1="230" y1="230" x2="600" y2="600" style="stroke: rgb(255,0,0); stroke-width: 2"></line>
+    <line class="fragment" x1="240" y1="0" x2="265" y2="230" style="stroke: rgb(255,0,0); stroke-width: 2"></line>
+    <line class="fragment" x1="530" y1="530" x2="0" y2="580" style="stroke: rgb(255,0,0); stroke-width: 2"></line>
+    <line class="fragment" x1="190" y1="560" x2="185" y2="230" style="stroke: rgb(255,0,0); stroke-width: 2"></line>
+  </svg>
+</section>
+
+<section>
+  <img src="images/bsp-tree.png" width="80%">
+</section>
+
+<section>
+  <pre><code>class BspTreeNode {
+  Plane partition;
+  List&lt;Polygon&gt; polygons = new ArrayList&lt;&gt;();
+  BspTreeNode front;
+  BspTreeNode back;
+}</code></pre>
+</section>
+
+<section>
+  <pre><code data-trim data-noescape>
+void buildBspTree(BspTreeNode node, List&lt;Polygon&gt; polygons) {
+  ...
+  polygons.forEach(polygon -> {
+    <span class="fragment highlight-current-blue">switch(classify(polygon, node.partition)) {</span>
+    <span class="fragment highlight-current-blue">case COINCIDENT:  node.polygons.add(polygon);      break;</span>
+    <span class="fragment highlight-current-blue">case IN_BACK_OF:  backlist.add(polygon);           break;</span>
+    <span class="fragment highlight-current-blue">case IN_FRONT_OF: frontlist.add(polygon);          break;</span>
+    <span class="fragment highlight-current-blue">case SPANNING:    split = split(polygon, tree.partition);
+                      backlist.add(split.getLeft());
+                      frontlist.add(split.getRight());</span>
+    }
+  });
+  ...
+}
+</code></pre>
+</section>
+
+<section>
+  <h4>Wahl der Teilebene</h4>
+  <ul>
+    <li>
+      Abhängig von Use Case
+      <ul>
+        <li>An Polygonachsen ausgerichtet</li>
+        <li>An Koordinatenachse ausgerichtet</li>
+      </ul>
+    </li>
+    <li>Ziele:
+      <ul>
+        <li>Baum balancieren</li>
+        <li>Schnitte minimieren</li>
+      </ul>
+    </li>
+  </ul>
+  <p class="fragment">Balance &larr;&rarr; Schnitte</p>
+</section>
+
+<section>
+  <h4>Stoppbedingung</h4>
+  <ul>
+    <li>maximale Fragment Anzahl bei Leaf</li>
+    <li>sobald jedes Polygon in einem Leaf ist</li>
+    <li>maximale Baumtiefe erreicht</li>
+    <li>...</li>
+  </ul>
+</section>
+
+<section>
+  <h4>Suche</h4>
+</section>
+
+<section>
+  <pre><code data-trim data-noescape>
+switch(classify(v, node.partition) {
+  case IN_BACK_OF:
+    renderPolygons(node.front.polygons);
+    renderPolygons(node.polygons);
+    renderPolygons(node.back.polygons); break;
+  case IN_FRONT_OF:
+    renderPolygons(node.getBack.polygons);
+    renderPolygons(node.polygons);
+    renderPolygons(node.getFront.polygons); break;
+  case COINCIDENT:
+    renderPolygons(node.front.polygons);
+    renderPolygons(node.back.polygons); break;
+}
+  </code></pre>
+</section>
+
+<section>
+  <h4>Dynamik</h4>
+  <ul>
+    <li>nicht geeignet</li>
+    <li>Wird beim Laden des Levels berechnet</li>
+  </ul>
+
+  <p class="fragment">Einfügen und Neuberechnung haben die selbe Zeitkomplexität von O(n<sup>3</sup>)</p>
+</section>
+
+<section style="text-align: left">
+  <p>Binary Space Partitioning</p>
+  <p class="fragment highlight-blue">Orthogonale Bereichsuche</p>
+  <p>Windowing</p>
+</section>
+
+<section>
+  <h2>Orthogonale Bereichsuche</h2>
+</section>
+
+<section>
+  <table>
+    <thead>
+    <tr>
+      <th colspan="4">Employee</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>Name</td>
+      <td>Birthday</td>
+      <td>Salary</td>
+      <td>Kids</td>
+    </tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <pre><code data-trim>
+    SELECT * FROM Employee WHERE
+      Salary > 3000 AND
+      Salary < 4000
+  </code></pre>
+
+  <svg width="600px" height="600px">
+    <line x1="0" y1="230" x2="600" y2="230" style="stroke: rgb(255,255,255); stroke-width: 2"></line>
+    <text x="0" y="220" fill="white" font-size="20px">0 CHF</text>
+    <text x="600" y="220" fill="white" text-anchor="end" font-size="20px">6'000 CHF</text>
+
+    <g class="fragment">
+      <line x1="300" y1="230" x2="400" y2="230" style="stroke: rgb(255,0,0); stroke-width: 2"></line>
+      <text x="300" y="220" fill="white" text-anchor="end" font-size="15px">3'000 CHF</text>
+      <text x="400" y="220" fill="white" font-size="15px">4'000 CHF</text>
+    </g>
+  </svg>
+</section>
+
+<section>
+  <pre><code data-trim>
+    SELECT * FROM Employee WHERE
+      Salary > 3000 AND
+      Salary < 4000 AND
+      Birthday > '01-01-1950' AND
+      Birthday < '01-01-1960'
+  </code></pre>
+  <div class="fragment">
+    <img src="images/database-search.png">
+    <small class="source">Source: Computational Geometry - Algorithms and Applications, 3rd Edition Mark de Berg,
+      Otfried Cheong,
+      Marc van Kreveld, Mark Overmars
+    </small>
+  </div>
+</section>
+
+<section>
+  <pre><code data-trim>
+    SELECT * FROM Employee WHERE
+      Salary > 3000 AND
+      Salary < 4000 AND
+      Birthday > '01-01-1950' AND
+      Birthday < '01-01-1960' AND
+      Kids >= 2 AND
+      Kids <= 4
+  </code></pre>
+  <div class="fragment">
+    <img src="images/database-search-3d.png">
+    <small class="source">Source: Computational Geometry - Algorithms and Applications, 3rd Edition Mark de Berg,
+      Otfried Cheong,
+      Marc van Kreveld, Mark Overmars
+    </small>
+  </div>
+</section>
+
+<section>
+  <h3>Kd Tree</h3>
+</section>
+
+<section>
+  <canvas id="kdtree-space" width="450px" height="600px" style="border: 1px solid #333; float: left"></canvas>
+  <canvas id="kdtree-tree" width="450px" height="600px" style="border: 1px solid #333"></canvas>
+  <script src="js/kdtree/reveal-connect.js" type="module"></script>
+
+  <div class="fragment" data-point data-x="136" data-y="383"></div>
+  <div class="fragment" data-point data-x="388" data-y="311"></div>
+  <div class="fragment" data-point data-x="245" data-y="101"></div>
+  <div class="fragment" data-point data-x="430" data-y="490"></div>
+  <div class="fragment" data-point data-x="298" data-y="210"></div>
+  <div class="fragment" data-point data-x="50" data-y="550"></div>
+</section>
+
+<section>
+  <iframe src="demos/kdtree.html" width="1350px" height="650px"></iframe>
+</section>
+
+<section>
+  <pre><code data-trim>
+class Node {
+  Split split;
+  Point point;
+  Node above;
+  Node below;
+}
+
+class Split {
+  boolean even;
+  float coordinate;
+}
+  </code></pre>
+</section>
+
+<section>
+  <pre><code data-trim data-noescape>
+Node buildKdTree(List&lt;Point&gt; points, int depth) {
+  <span class="fragment highlight-current-blue">if(points.size() == 0)
+    return null;</span>
+  <span class="fragment highlight-current-blue">if(points.size() == 1)
+    return new Node(points.get(0));</span>
+
+  <span class="fragment highlight-current-blue">boolean even = depth % 2 == 0;
+    {split, pointsAbove, pointsBelow} = split(points, even);</span>
+
+  <span class="fragment highlight-current-blue">Node nodeAbove = buildKdTree(pointsAbove, depth + 1);
+  Node nodeBelow = buildKdTree(pointsBelow, depth + 1);</span>
+
+  return new Node(split, nodeAbove, noveBelow);
+}
+  </code></pre>
+</section>
+
+<section>
+  <h4>Punkte hinzufügen</h4>
+
+  <ul>
+    <li>nicht alle Punkte müssen aufgeteilt werden</li>
+    <li>je mehr Punkte desto unbalancierter ist der Baum</li>
+    <li>Rotationsmethode ist nicht anwendbar</li>
+  </ul>
+</section>
+
+<section>
+  <h4>Punkte entfernen</h4>
+
+  <ul>
+    <li>Punkte löschen, Node stehen lassen</li>
+    <li>Teilbaum neuberechnen</li>
+    <li>Ersatz suchen</li>
+  </ul>
+</section>
+
+<section style="text-align: left">
+  <p>Binary Space Partitioning</p>
+  <p>Orthogonale Bereichsuche</p>
+  <p class="fragment highlight-blue">Windowing</p>
+</section>
+
+<section>
+  <h2>Windowing</h2>
+</section>
+
+<section>
+  <img src="images/windowing-query.png">
+  <small class="source">Source: http://slideplayer.com/slide/3288943/</small>
+</section>
+
+<section>
+  <h3>Interval Tree</h3>
+</section>
+
+<section>
+  <img src="images/intervals.png">
+</section>
+
+<section>
+  <pre><code data-trim data-noescape>
+class Interval { int start; int end; }
+
+class Node {
+  int value;
+  SortedIntervals mid;
+  Node left;
+  Node right;
+}
+
+class SortedIntervals {
+  SortedSet&lt;Interval&gt; startpoints;
+  SortedSet&lt;Interval&gt; endpoints;
+}
+  </code></pre>
+</section>
+
+<section>
+  <pre><code data-trim data-noescape>
+Node buildIntervalTree(Set&lt;Interval&gt; intervals) {
+  Node node = new Node();
+  <span class="fragment highlight-current-blue">int endMedian = calcEndpointMedian(intervals);</span>
+  <span class="fragment highlight-current-blue">{left, mid, right} = classify(intervals, endMedian);</span>
+
+  node.value = endMedian;
+  node.mid = mid;
+  <span class="fragment highlight-current-blue">node.left = buildIntervalTree(left);
+  node.right = buildIntervalTree(right);</span>
+
+  return node;
+}
+  </code></pre>
+</section>
+
+<section>
+  <h4>Intervalle einfügen und entfernen</h4>
+  <img src="images/interval-tree-deletion.png">
+  <small class="source">Source: <a href="https://en.wikipedia.org/wiki/Interval_tree">Wikipedia Interval Tree</a></small>
+</section>
+
+
+<section>
+  <h3>R-Tree</h3>
+</section>
+
+<section>
+  <img src="images/r-tree.png" style="background: white">
+  <small class="source">Source: <a href="https://en.wikipedia.org/wiki/R-tree">Wikipedia R Tree</a></small>
+</section>
+
+<section>
+  <ul>
+    <li>Teilbäume werden in Pages gespeichert</li>
+    <li>Nodes können mehr als 2 Children haben</li>
+    <li>Jedes Rectangle umschliesst die Children Rectangle</li>
+  </ul>
+</section>
+
+<section>
+  <h4>Einfügen in R Tree</h4>
+  <ol>
+    <li>Bewerte Children-Rectangle (Heuristik)</li>
+    <li>Gehe zu 1. solange keine Leaf erreicht wurde</li>
+    <li>Einfügen
+      <ol>
+        <li>Ist das Leaf voll muss die Node aufgeteilt werden</li>
+        <li>Ist die darüberliegende Node voll muss auch diese aufgeteilt werden</li>
+        <li>...</li>
+      </ol>
+    </li>
+  </ol>
+</section>
+
+
+
+<section style="text-align: left">
+  <h2>What have we learned?</h2>
+
+  <div class="fragment highlight-current-blue">
+    <p>Binary Space Partitioning</p>
+    <small>Painters Algorithm, BSP Tree</small>
+  </div>
+
+  <div class="fragment highlight-current-blue">
+    <p>Orthogonale Bereichsuche</p>
+    <small>Datenbank Bereichsuche, Kd Tree</small>
+  </div>
+
+  <div class="fragment highlight-current-blue">
+    <p>Windowing</p>
+    <small>Interval Tree, R-Tree</small>
+  </div>
+</section>
+
+<section style="text-align: left;">
+  <h1>THE END</h1>
+  <p>
+    <a href="https://github.com/sebastianhaeni/space-partitioning">Source code &amp; documentation</a>
+    <small>https://github.com/sebastianhaeni/space-partitioning</small>
+  </p>
+</section>
+
+  </div>
+</div>
+<script>
+
+  // More info https://github.com/hakimel/reveal.js#configuration
+  Reveal.initialize({
+    controls: false,
+    progress: true,
+    history: true,
+    center: true,
+
+    transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+    // More info https://github.com/hakimel/reveal.js#dependencies
+    dependencies: [
+      { src: 'lib/js/classList.js', condition: function () { return !document.body.classList; }},
+      { src: 'plugin/markdown/marked.js', condition: function () { return !!document.querySelector('[data-markdown]'); }},
+      { src: 'plugin/markdown/markdown.js', condition: function () { return !!document.querySelector('[data-markdown]'); }},
+      { src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); }},
+      {src: 'plugin/zoom-js/zoom.js', async: true},
+      {src: 'plugin/notes/notes.js', async: true}
+    ]
+  });
+
+</script>
+
+</body>
+</html>
